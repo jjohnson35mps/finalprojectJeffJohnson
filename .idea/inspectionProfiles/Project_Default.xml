@@ -1,0 +1,47 @@
+<component name="InspectionProjectProfileManager">
+  <profile version="1.0">
+    <option name="myName" value="Project Default" />
+    <inspection_tool class="PyPackageRequirementsInspection" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="ignoredPackages">
+        <list>
+          <option value="beautifulsoup4" />
+          <option value="certifi" />
+          <option value="cffi" />
+          <option value="charset-normalizer" />
+          <option value="colorama" />
+          <option value="contourpy" />
+          <option value="curl_cffi" />
+          <option value="cycler" />
+          <option value="fonttools" />
+          <option value="frozendict" />
+          <option value="idna" />
+          <option value="kagglehub" />
+          <option value="kiwisolver" />
+          <option value="matplotlib" />
+          <option value="multitasking" />
+          <option value="numpy" />
+          <option value="packaging" />
+          <option value="pandas" />
+          <option value="peewee" />
+          <option value="pillow" />
+          <option value="platformdirs" />
+          <option value="protobuf" />
+          <option value="pycparser" />
+          <option value="pyparsing" />
+          <option value="python-dateutil" />
+          <option value="pytz" />
+          <option value="PyYAML" />
+          <option value="requests" />
+          <option value="six" />
+          <option value="soupsieve" />
+          <option value="tqdm" />
+          <option value="typing_extensions" />
+          <option value="tzdata" />
+          <option value="urllib3" />
+          <option value="websockets" />
+          <option value="yfinance" />
+        </list>
+      </option>
+    </inspection_tool>
+  </profile>
+</component>
