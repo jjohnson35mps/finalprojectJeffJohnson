@@ -15,6 +15,8 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+from dotenv import load_dotenv
+load_dotenv(BASE_DIR / ".env")  # reads src/.env at server start
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
@@ -27,6 +29,23 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+# src/DarkWebLeakFinder/settings.py  (add or replace LOGGING)
+# Logs to the dev server console so you can see HIBP calls/results.
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {
+        "console": {"class": "logging.StreamHandler"},
+    },
+    "loggers": {
+        # our app-level logger
+        "breaches": {"handlers": ["console"], "level": "INFO"},
+        # keep Django request errors visible
+        "django.request": {"handlers": ["console"], "level": "INFO", "propagate": True},
+    },
+}
+
+
 
 # Application definition
 
@@ -37,6 +56,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    "core",
+    "breaches",
+    "dashboard",
 ]
 
 MIDDLEWARE = [

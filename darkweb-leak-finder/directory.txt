@@ -8,6 +8,7 @@ C:.
 ª   Dockerfile
 ª   manage.py
 ª   pyproject.toml
+ª   pytest.ini
 ª   README.md
 ª   requirements.txt
 ª   ruff.toml
@@ -16,13 +17,21 @@ C:.
 ª   +---workflows
 ª           ci.yml
 ª           
++---.pytest_cache
+ª   ª   .gitignore
+ª   ª   CACHEDIR.TAG
+ª   ª   README.md
+ª   ª   
+ª   +---v
+ª       +---cache
+ª               lastfailed
+ª               nodeids
+ª               
 +---data
 +---docs
 +---fixtures
 +---scripts
 +---src
-ª   ª   manage.py
-ª   ª   
 ª   +---breaches
 ª   ª   ª   admin.py
 ª   ª   ª   apps.py
@@ -45,6 +54,10 @@ C:.
 ª   ª   +---templates
 ª   ª   ª   +---breaches
 ª   ª   +---tests
+ª   ª   +---__pycache__
+ª   ª           models.cpython-313.pyc
+ª   ª           __init__.cpython-313.pyc
+ª   ª           
 ª   +---core
 ª   ª   ª   admin.py
 ª   ª   ª   apps.py
@@ -70,12 +83,16 @@ C:.
 ª   ª   ª           
 ª   ª   +---tests
 ª   +---DarkWebLeakFinder
-ª   ª       asgi.py
-ª   ª       settings.py
-ª   ª       urls.py
-ª   ª       wsgi.py
-ª   ª       __init__.py
-ª   ª       
+ª   ª   ª   asgi.py
+ª   ª   ª   settings.py
+ª   ª   ª   urls.py
+ª   ª   ª   wsgi.py
+ª   ª   ª   __init__.py
+ª   ª   ª   
+ª   ª   +---__pycache__
+ª   ª           settings.cpython-313.pyc
+ª   ª           __init__.cpython-313.pyc
+ª   ª           
 ª   +---dashboard
 ª       ª   admin.py
 ª       ª   apps.py
@@ -100,3 +117,8 @@ C:.
 ª       ª           
 ª       +---tests
 +---tests
+    ª   test_breaches.py
+    ª   
+    +---__pycache__
+            test_breaches.cpython-313-pytest-9.0.0.pyc
+            
