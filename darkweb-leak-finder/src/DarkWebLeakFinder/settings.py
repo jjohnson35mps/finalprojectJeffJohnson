@@ -59,6 +59,7 @@ INSTALLED_APPS = [
     "core",
     "breaches",
     "dashboard",
+    "django.contrib.humanize",
 ]
 
 MIDDLEWARE = [

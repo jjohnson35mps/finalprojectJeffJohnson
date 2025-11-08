@@ -21,5 +21,5 @@ def detail(request, pk: int):
     Renders: templates/dashboard/detail.html
     """
     identity = get_object_or_404(EmailIdentity, pk=pk)
-    hits = identity.hits.all().order_by("-created_at")
+    hits = identity.hits.order_by("-occurred_on", "breach_name")  # newest first
     return render(request, "dashboard/detail.html", {"identity": identity, "hits": hits})
