@@ -1,0 +1,194 @@
+/* Dark Web Leak Finder — Dark Theme */
+/* ------------------------------------------------------------ */
+:root {
+  /* Surfaces & text */
+  --dw-page:   #1a1f24;   /* page grey */
+  --dw-panel:  #0f141a;   /* cards/accordion/nav */
+  --dw-border: #1f2a33;
+  --dw-text:   #ffffff;   /* primary text (headings, labels) */
+  --dw-detail: #c7d0da;   /* paragraph/detail text (light grey) */
+  --dw-link:   #93c5fd;
+  --dw-link-h: #bfdbfe;
+
+  /* Buttons */
+  --dw-button:       var(--dw-page); /* uniform dark-grey buttons */
+  --dw-button-hover: #232a31;        /* slightly lighter on hover/focus */
+  --dw-button-edge:  #2b3640;
+
+  /* Bootstrap body tokens */
+  --bs-body-bg: var(--dw-page);
+  --bs-body-color: var(--dw-text);
+}
+
+/* Page canvas */
+html, body {
+  background-color: var(--dw-page) !important;
+  color: var(--dw-text) !important;
+}
+
+/* Kill stray light backgrounds */
+.bg-body, .bg-light, .bg-white,
+.container, .container-fluid,
+main, .page, .content {
+  background-color: var(--dw-page) !important;
+  color: var(--dw-text) !important;
+}
+
+/* Navbar */
+.navbar, .navbar-dark, .navbar .container {
+  background-color: var(--dw-panel) !important;
+  color: var(--dw-text) !important;
+}
+.navbar a, .navbar-brand, .nav-link { color: var(--dw-text) !important; }
+
+/* Cards / panels / modals / lists */
+.card, .modal-content, .list-group-item,
+.accordion-item, .accordion-body {
+  background-color: var(--dw-panel) !important;
+  color: var(--dw-text) !important;
+  border-color: var(--dw-border) !important;
+}
+
+/* Accordion headers */
+.accordion-button,
+.accordion-button:not(.collapsed) {
+  background-color: var(--dw-panel) !important;
+  color: var(--dw-text) !important;
+  border-color: var(--dw-border) !important;
+  box-shadow: none !important;
+}
+/* Make subtitle next to breach name white too */
+.accordion-button .text-muted,
+.accordion-button .text-body-secondary,
+.accordion-button small,
+.accordion-header .text-muted,
+.accordion-header .text-body-secondary,
+.accordion-button span {
+  color: var(--dw-text) !important;
+  opacity: 1 !important;
+}
+
+/* Detail/paragraph copy — light grey */
+.accordion-body,
+.accordion-body p,
+.accordion-body li,
+.accordion-body span,
+.accordion-body .small,
+.accordion-body .text-muted,
+.accordion-body .text-body-secondary {
+  color: var(--dw-detail) !important;
+  opacity: 1 !important; /* neutralize Bootstrap muted opacity */
+}
+/* Keep headings/labels inside details bright */
+.accordion-body h1,
+.accordion-body h2,
+.accordion-body h3,
+.accordion-body h4,
+.accordion-body h5,
+.accordion-body h6,
+.accordion-body .badge,
+.accordion-body strong {
+  color: var(--dw-text) !important;
+}
+
+/* Form controls */
+.form-control, .form-select {
+  background-color: #11161c !important;
+  color: var(--dw-text) !important;
+  border: 1px solid #2b3640 !important;
+}
+.form-control::placeholder { color: #8b98a5; }
+
+/* Uniform dark-grey buttons with light-grey text */
+.btn,
+.btn-primary, .btn-secondary, .btn-success, .btn-danger,
+.btn-warning, .btn-info, .btn-light, .btn-dark,
+.btn-outline-primary, .btn-outline-secondary, .btn-outline-success,
+.btn-outline-danger, .btn-outline-warning, .btn-outline-info,
+.btn-outline-light, .btn-outline-dark {
+  background-color: var(--dw-button) !important;
+  color: var(--dw-detail) !important;
+  border-color: var(--dw-button-edge) !important;
+  box-shadow: none !important;
+}
+.btn:hover,
+.btn:focus,
+.btn:active,
+.btn:active:focus,
+.btn-check:checked + .btn,
+.btn-check:active + .btn {
+  background-color: var(--dw-button-hover) !important;
+  color: var(--dw-detail) !important;
+  border-color: var(--dw-border) !important;
+}
+.btn:disabled,
+.btn.disabled {
+  background-color: var(--dw-button) !important;
+  color: var(--dw-detail) !important;
+  border-color: var(--dw-button-edge) !important;
+  opacity: 0.6;
+}
+.btn-link {
+  background-color: var(--dw-button) !important;
+  color: var(--dw-detail) !important;
+  text-decoration: none;
+}
+.btn-link:hover { color: var(--dw-detail) !important; text-decoration: underline; }
+
+/* Tables */
+.table {
+  --bs-table-bg: var(--dw-panel);
+  --bs-table-color: var(--dw-text);
+  --bs-table-border-color: var(--dw-border);
+}
+
+/* Links */
+a { color: var(--dw-link); }
+a:hover { color: var(--dw-link-h); }
+
+/* Messages / alerts */
+.alert {
+  background-color: var(--dw-panel) !important;
+  color: var(--dw-text) !important;
+  border-color: #2b3640 !important;
+}
+
+/* Misc UI (dropdowns, offcanvas, tooltips/popovers) */
+.dropdown-menu, .offcanvas, .toast,
+.popover, .tooltip-inner {
+  background-color: var(--dw-panel) !important;
+  color: var(--dw-text) !important;
+  border-color: var(--dw-border) !important;
+}
+
+/* --- Uniform dark-grey badges/chips --- */
+.badge,
+.badge.rounded-pill,
+.badge[class*="text-bg-"],
+.badge[class*="bg-"],
+.tag,
+.label,
+.pill,
+.chip {
+  background-color: var(--dw-page) !important;
+  color: var(--dw-detail) !important;
+  border: 1px solid var(--dw-button-edge) !important;
+  box-shadow: none !important;
+}
+/* Neutralize any opacity utilities on badges */
+.badge [class*="opacity-"],
+.badge.opacity-75,
+.badge.opacity-50 { opacity: 1 !important; }
+/* Pill look & feel */
+.badge.rounded-pill,
+.badge-pill, .tag, .chip {
+  border-radius: 9999px !important;
+  padding: 0.35rem 0.6rem !important;
+  font-weight: 600;
+  font-size: 0.8rem;
+}
+/* Hover for chips */
+.badge:hover, .tag:hover, .chip:hover {
+  background-color: var(--dw-button-hover) !important;
+  color: var(--dw-detail) !important;
+}
