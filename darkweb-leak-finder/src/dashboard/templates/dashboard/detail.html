@@ -1,0 +1,16 @@
+{% extends "core/base.html" %}
+{% block content %}
+  <div class="card p-3 shadow-sm">
+    <h1 class="h5 mb-3">{{ identity.address }}</h1>
+    <ul class="list-group">
+      {% for h in hits %}
+        <li class="list-group-item">
+          <strong>{{ h.breach_name }}</strong>
+          {% if h.domain %}<span class="text-muted">({{ h.domain }})</span>{% endif %}
+        </li>
+      {% empty %}
+        <li class="list-group-item">No known breaches stored.</li>
+      {% endfor %}
+    </ul>
+  </div>
+{% endblock %}

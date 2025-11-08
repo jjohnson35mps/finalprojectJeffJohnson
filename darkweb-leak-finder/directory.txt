@@ -1,0 +1,102 @@
+﻿Folder PATH listing for volume Windows
+Volume serial number is 6C9A-CA09
+C:.
+ª   .env.example
+ª   .gitignore
+ª   directory.txt
+ª   docker-compose.yml
+ª   Dockerfile
+ª   manage.py
+ª   pyproject.toml
+ª   README.md
+ª   requirements.txt
+ª   ruff.toml
+ª   
++---.github
+ª   +---workflows
+ª           ci.yml
+ª           
++---data
++---docs
++---fixtures
++---scripts
++---src
+ª   ª   manage.py
+ª   ª   
+ª   +---breaches
+ª   ª   ª   admin.py
+ª   ª   ª   apps.py
+ª   ª   ª   models.py
+ª   ª   ª   urls.py
+ª   ª   ª   views.py
+ª   ª   ª   __init__.py
+ª   ª   ª   
+ª   ª   +---migrations
+ª   ª   ª       __init__.py
+ª   ª   ª       
+ª   ª   +---services
+ª   ª   ª       hibp.py
+ª   ª   ª       
+ª   ª   +---static
+ª   ª   ª   +---breaches
+ª   ª   ª       +---css
+ª   ª   ª       +---img
+ª   ª   ª       +---js
+ª   ª   +---templates
+ª   ª   ª   +---breaches
+ª   ª   +---tests
+ª   +---core
+ª   ª   ª   admin.py
+ª   ª   ª   apps.py
+ª   ª   ª   models.py
+ª   ª   ª   urls.py
+ª   ª   ª   views.py
+ª   ª   ª   __init__.py
+ª   ª   ª   
+ª   ª   +---migrations
+ª   ª   ª       __init__.py
+ª   ª   ª       
+ª   ª   +---services
+ª   ª   ª       utils.py
+ª   ª   ª       
+ª   ª   +---static
+ª   ª   ª   +---core
+ª   ª   ª       +---css
+ª   ª   ª       +---img
+ª   ª   ª       +---js
+ª   ª   +---templates
+ª   ª   ª   +---core
+ª   ª   ª           base.html
+ª   ª   ª           
+ª   ª   +---tests
+ª   +---DarkWebLeakFinder
+ª   ª       asgi.py
+ª   ª       settings.py
+ª   ª       urls.py
+ª   ª       wsgi.py
+ª   ª       __init__.py
+ª   ª       
+ª   +---dashboard
+ª       ª   admin.py
+ª       ª   apps.py
+ª       ª   models.py
+ª       ª   urls.py
+ª       ª   views.py
+ª       ª   __init__.py
+ª       ª   
+ª       +---migrations
+ª       ª       __init__.py
+ª       ª       
+ª       +---services
+ª       +---static
+ª       ª   +---dashboard
+ª       ª       +---css
+ª       ª       +---img
+ª       ª       +---js
+ª       +---templates
+ª       ª   +---dashboard
+ª       ª           detail.html
+ª       ª           home.html
+ª       ª           
+ª       +---tests
++---tests

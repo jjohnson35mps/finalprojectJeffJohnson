@@ -1,0 +1,11 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "darkweb-leak-finder"
+version = "0.1.0"
+requires-python = ">=3.11"
+description = "INF601G graduate final project scaffold (Django + HIBP)"
+readme = "README.md"
+dependencies = []
