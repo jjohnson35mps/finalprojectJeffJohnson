@@ -21,7 +21,7 @@
 
     <nav class="navbar navbar-expand-lg bg-dark" data-bs-theme="dark">
       <div class="container">
-        <a class="navbar-brand text-light" href="{% url 'dashboard:home' %}">Dark Web Leak Finder</a>
+        <a class="navbar-brand text-light" href="{% url 'breaches:dashboard' %}">Dark Web Leak Finder</a>
         <div class="ms-auto">
           <a class="btn btn-sm btn-outline-light" href="{% url 'breaches:add' %}">Add Identity</a>
         </div>
@@ -29,6 +29,13 @@
     </nav>
 
     <main class="container py-4">
+      {% if messages %}
+        <div class="mb-3">
+          {% for m in messages %}
+            <div class="alert alert-{{ m.tags|default:'secondary' }} mb-2">{{ m }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
       {% block content %}{% endblock %}
     </main>
 

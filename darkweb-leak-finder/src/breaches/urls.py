@@ -8,6 +8,8 @@ from . import views
 app_name = "breaches"
 
 urlpatterns = [
+    path("", views.dashboard, name="dashboard"),
     path("add/", views.add_identity, name="add"),
     path("<int:pk>/scan/", views.scan_identity, name="scan"),
+    path("scan/", views.scan_target, name="scan_target"),
 ]

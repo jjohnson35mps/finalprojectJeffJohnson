@@ -20,6 +20,11 @@ DATA_DIR = PROJECT_ROOT / "data"
 from dotenv import load_dotenv
 load_dotenv(BASE_DIR / ".env")  # reads src/.env at server start
 
+# Values provided by manage.py via python-dotenv
+SHODAN_API_KEY   = os.getenv("SHODAN_API_KEY")
+HIBP_API_KEY     = os.getenv("HIBP_API_KEY")
+HIBP_USER_AGENT  = os.getenv("HIBP_USER_AGENT")
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 

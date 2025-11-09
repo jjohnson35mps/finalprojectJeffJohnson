@@ -38,9 +38,9 @@ def test_no_project_specific_imports():
 def test_templates_are_namespaced_and_loadable():
     # If the app ships templates correctly, the loader can resolve them by namespaced path
     # Note: we just verify the file listed in your tree.
-    tmpl = f"{APP_NAME}/add_identity.html"
+    tmpl = f"{APP_NAME}/main_db.html"
     tpl = get_template(tmpl)
-    assert tpl.origin.name.endswith("add_identity.html")
+    assert tpl.origin.name.endswith("main_db.html")
 
 def test_has_at_least_one_migration_file():
     migs = list((APP_DIR / "migrations").glob("0*.py"))

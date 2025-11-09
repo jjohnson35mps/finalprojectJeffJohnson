@@ -21,16 +21,11 @@ from django.urls import path, include
 urlpatterns = [
     path("admin/", admin.site.urls),
 
-    # Core (your existing root-level routes)
-    path("", include(("core.urls", "core"), namespace="core")),
+    # Make the site root (/) show the Breaches dashboard
+    path("", include(("breaches.urls", "breaches"), namespace="breaches")),
 
-    # Dashboard at /dashboard/
+    # Keep the other apps mounted as needed
     path("dashboard/", include(("dashboard.urls", "dashboard"), namespace="dashboard")),
-
-    # Breach monitoring at /breaches/
-    path("breaches/", include(("breaches.urls", "breaches"), namespace="breaches")),
-
-    # Ticker at /security_ticker/
+    path("core/", include(("core.urls", "core"), namespace="core")),
     path("api/ticker/", include(("security_ticker.urls", "security_ticker"), namespace="security_ticker")),
-
 ]
