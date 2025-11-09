@@ -62,6 +62,7 @@ INSTALLED_APPS = [
     "breaches",
     "dashboard",
     "django.contrib.humanize",
+    "security_ticker",
 ]
 
 MIDDLEWARE = [
@@ -145,3 +146,6 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Security ticker cache settings
+SECURITY_TICKER_CACHE_TIMEOUT = 3600  # 1 hour

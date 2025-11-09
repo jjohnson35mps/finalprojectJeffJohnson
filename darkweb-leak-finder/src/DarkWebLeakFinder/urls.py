@@ -29,4 +29,8 @@ urlpatterns = [
 
     # Breach monitoring at /breaches/
     path("breaches/", include(("breaches.urls", "breaches"), namespace="breaches")),
+
+    # Ticker at /security_ticker/
+    path("api/ticker/", include(("security_ticker.urls", "security_ticker"), namespace="security_ticker")),
+
 ]

@@ -1,0 +1,56 @@
+/* src/security_ticker/static/security_ticker/css/ticker.css */
+
+.ticker-container {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  background: #111;
+  color: #fff;
+  padding: 0.5rem 1rem;
+  /* adjust height if needed */
+}
+
+.ticker-title {
+  flex: 0 0 auto;
+  margin-right: 1rem;
+  font-weight: bold;
+  font-size: 1.1rem;
+  white-space: nowrap;
+}
+
+.ticker-track-wrapper {
+  flex: 1 1 auto;
+  overflow: hidden;
+}
+
+.ticker-track {
+  display: inline-block;
+  white-space: nowrap;
+  animation: scroll-left 50s linear infinite;
+}
+
+.ticker-item {
+  display: inline-block;
+  padding: 0 2rem;
+  font-size: 1rem;
+  vertical-align: middle;
+}
+
+.ticker-item a {
+  color: #4fc3f7;
+  text-decoration: none;
+}
+
+.ticker-item a:hover {
+  text-decoration: underline;
+}
+
+@keyframes scroll-left {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.ticker-container:hover .ticker-track {
+  animation-play-state: paused;
+}
