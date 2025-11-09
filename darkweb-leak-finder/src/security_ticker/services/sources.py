@@ -1,52 +1,45 @@
 # src/security_ticker/services/sources.py
-
-import json
 import requests
-import time
-from pathlib import Path
-from django.conf import settings
 
-CACHE_FILE = Path(settings.BASE_DIR) / "data" / "kev_cache.json"
-CACHE_TTL = 3600  # seconds = 1 hour
-KEV_URL = "https://www.cisa.gov/sites/default/files/feeds/known-exploited-vulnerabilities.json"
+KEV_URL = "https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities"  # no .json
 
-def _load_cache():
-    """Load cache from disk if it exists and not expired."""
-    if CACHE_FILE.exists():
-        stat = CACHE_FILE.stat()
-        age = time.time() - stat.st_mtime
-        if age < CACHE_TTL:
-            with CACHE_FILE.open("r", encoding="utf-8") as f:
-                return json.load(f)
-    return None
-
-def _save_cache(data):
-    """Save fetched data to cache file."""
-    CACHE_FILE.parent.mkdir(parents=True, exist_ok=True)
-    with CACHE_FILE.open("w", encoding="utf-8") as f:
-        json.dump(data, f)
-
-def fetch_kev_items(limit=10):
+def fetch_kev_items(limit: int = 10):
     """
-    Fetch the KEV catalog list, cache hourly, return latest 'limit' items.
-    Returns list of dicts: { 'title', 'subtitle', 'date', 'url' }
+    Return a list of dicts: [{"title": str, "date": "YYYY-MM-DD", "link": str}, ...]
+    Built from CISA KEV JSON. Falls back to empty list if request fails.
     """
-    data = _load_cache()
-    if data is None:
-        resp = requests.get(KEV_URL, timeout=10)
+    headers = {
+        "User-Agent": "DarkWebLeakFinder/1.0 (contact@example.com)",
+        "Accept": "application/json",
+    }
+    try:
+        resp = requests.get(KEV_URL, headers=headers, timeout=10)
         resp.raise_for_status()
         data = resp.json()
-        _save_cache(data)
 
-    vulns = data.get("vulnerabilities", [])
-    vulns_sorted = sorted(vulns, key=lambda x: x.get("dateAdded", ""), reverse=True)
+        # CISA KEV JSON schema exposes "vulnerabilities": [...]
+        vulns = data.get("vulnerabilities", [])
+        items = []
+        for v in vulns[:limit]:
+            cve   = v.get("cveID") or "CVE-unknown"
+            when  = v.get("dateAdded") or ""
+            vend  = (v.get("vendorProject") or "").strip()
+            prod  = (v.get("product") or "").strip()
+            desc  = (v.get("shortDescription") or "").strip()
 
-    items = []
-    for entry in vulns_sorted[:limit]:
-        items.append({
-            "title": entry.get("cveID", ""),
-            "subtitle": f"{entry.get('vendorProject', '')} {entry.get('product', '')}".strip(),
-            "date": entry.get("dateAdded", ""),
-            "url": entry.get("notes", "") or ""
-        })
-    return items
+            title_bits = [cve]
+            if vend or prod:
+                title_bits.append(f"{vend} {prod}".strip())
+            if desc:
+                title_bits.append(desc)
+
+            items.append({
+                "title": " — ".join(b for b in title_bits if b),
+                "date": when[:10],
+                "link": f"https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext={cve}",
+            })
+        return items
+
+    except Exception:
+        # Don’t crash the endpoint; let the view decide how to handle an empty list.
+        return []
