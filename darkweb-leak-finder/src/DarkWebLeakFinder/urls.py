@@ -20,5 +20,17 @@ from django.urls import path, include
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("", include("core.urls")),          # root -> core (often routes to dashboard)
+
+    # Core (your existing root-level routes)
+    path("", include(("core.urls", "core"), namespace="core")),
+
+    # Dashboard at /dashboard/
+    path("dashboard/", include(("dashboard.urls", "dashboard"), namespace="dashboard")),
+
+    # Breach monitoring at /breaches/
+    path("breaches/", include(("breaches.urls", "breaches"), namespace="breaches")),
+
+    # Ticker at /security_ticker/
+    path("api/ticker/", include(("security_ticker.urls", "security_ticker"), namespace="security_ticker")),
+
 ]

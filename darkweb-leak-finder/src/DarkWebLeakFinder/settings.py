@@ -11,9 +11,11 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+import os
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent  # this points to src/
+PROJECT_ROOT = BASE_DIR.parent  # darkweb-leak-finder/
+DATA_DIR = PROJECT_ROOT / "data"
 
 from dotenv import load_dotenv
 load_dotenv(BASE_DIR / ".env")  # reads src/.env at server start
@@ -60,6 +62,7 @@ INSTALLED_APPS = [
     "breaches",
     "dashboard",
     "django.contrib.humanize",
+    "security_ticker",
 ]
 
 MIDDLEWARE = [
@@ -96,9 +99,9 @@ WSGI_APPLICATION = 'DarkWebLeakFinder.wsgi.application'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": os.getenv("SQLITE_PATH", str(DATA_DIR / "db.sqlite3")),
     }
 }
 
@@ -143,3 +146,6 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Security ticker cache settings
+SECURITY_TICKER_CACHE_TIMEOUT = 3600  # 1 hour
