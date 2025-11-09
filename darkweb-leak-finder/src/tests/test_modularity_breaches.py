@@ -7,10 +7,8 @@
 # - No hard imports from the project package (DarkWebLeakFinder)
 # - Templates renderable via the loader (namespacing is correct)
 
-import os
 import re
 from pathlib import Path
-import importlib
 import pytest
 from django.template.loader import get_template
 
