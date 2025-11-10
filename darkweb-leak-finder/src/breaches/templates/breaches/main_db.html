@@ -10,71 +10,104 @@
   </div>
 {% endif %}
 
-<section id="identities" class="mb-4">
-  <div class="card p-3 shadow-sm">
-    <h2 class="h5 mb-3">Identities</h2>
-    <form method="post" action="{% url 'breaches:add' %}" class="d-flex gap-2 mb-3">
-      {% csrf_token %}
-      <input name="email" type="email" class="form-control" placeholder="email@example.com" required>
-      <button class="btn btn-primary">Add</button>
-    </form>
+<div class="row g-4 align-items-start">
+  <!-- LEFT: cards -->
+  <div class="col-12 col-lg-5 col-xl-4" id="left-col">
+    <!-- Email Data Breach Check -->
+    <section id="identities" class="mb-4">
+      <div class="card p-3 shadow-sm">
+        <h2 class="h5 mb-3">Email Data Breach Check</h2>
+        <form method="post" action="{% url 'breaches:add' %}" class="d-flex gap-2 mb-3">
+          {% csrf_token %}
+          <input name="email" type="email" class="form-control" placeholder="email@example.com" required>
+          <button class="btn btn-primary">Add</button>
+        </form>
 
-    {% if identities %}
-      <ul class="list-group list-group-flush">
-        {% for i in identities %}
-          <li class="list-group-item bg-transparent d-flex justify-content-between align-items-center">
-            {# FIX 1: link to detail page #}
-            <a href="{% url 'breaches:identity_detail' i.pk %}" class="text-decoration-none">
-              {{ i.address }}
-            </a>
+        {% if identities %}
+          <ul class="list-group list-group-flush">
+            {% for i in identities %}
+              <li class="list-group-item bg-transparent d-flex justify-content-between align-items-center">
+                <a href="{% url 'breaches:identity_detail' i.pk %}" class="text-decoration-none">
+                  {{ i.address }}
+                </a>
+                <a href="{% url 'breaches:scan_identity' pk=i.pk %}" class="btn btn-sm btn-outline-light">Scan</a>
+              </li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <span class="text-muted small">No identities yet. Add one above.</span>
+        {% endif %}
+      </div>
+    </section>
 
-            {# FIX 2 (optional): prefer explicit name over legacy alias #}
-            <a href="{% url 'breaches:scan_identity' pk=i.pk %}" class="btn btn-sm btn-outline-light">Scan</a>
-            {# if you want to keep the alias, your existing {% url 'breaches:scan' i.pk %} still works #}
-          </li>
-        {% endfor %}
-      </ul>
-    {% else %}
-      <span class="text-muted small">No identities yet. Add one above.</span>
-    {% endif %}
+    <!-- Domain/IP Port Scan -->
+    <section id="scan" class="mt-4">
+      <div class="card p-3 shadow-sm">
+        <div class="d-flex align-items-center justify-content-between mb-2">
+          <h2 class="h5 mb-0">Domain or IP Port Scan</h2>
+          <small class="text-muted">Enter a domain or IP</small>
+        </div>
+
+        <form method="post" action="{% url 'breaches:scan_target' %}" class="d-flex gap-2">
+          {% csrf_token %}
+          <input name="target" type="text" class="form-control" placeholder="example.com or 1.2.3.4" required>
+          <button class="btn btn-primary">Scan</button>
+        </form>
+
+        {% if scans %}
+          <h3 class="h6 mb-2 pt-2">Recent scans</h3>
+          <ul class="list-group list-group-flush" id="recent-scans">
+            {% for s in scans %}
+              <li class="list-group-item bg-transparent d-flex justify-content-between align-items-center">
+                <span>
+                  <strong>{{ s.ip }}</strong><br>
+                  {% if s.hostnames and s.hostnames|length %}
+                    <span class="small text-muted">Hostnames:</span> {{ s.hostnames|join:", " }}<br>
+                  {% endif %}
+                  {% if s.org %}
+                    <span class="small text-muted">Organization:</span> {{ s.org }}<br>
+                  {% endif %}
+                  {% if s.os %}
+                    <span class="small text-muted">OS:</span> {{ s.os }}<br>
+                  {% endif %}
+                  {% if s.ports and s.ports|length %}
+                    <span class="small text-muted">Open Ports:</span> {{ s.ports|join:", " }}<br>
+                  {% endif %}
+                  <span class="small text-muted">Scan Time:</span> {{ s.last_seen|date:"Y-m-d H:i" }}
+                </span>
+              </li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+      </div>
+    </section>
   </div>
-</section>
 
-<section id="scan" class="mt-4">
-  <div class="card p-3 shadow-sm">
-    <div class="d-flex align-items-center justify-content-between mb-2">
-      <h2 class="h5 mb-0">Scan Target</h2>
-      <small class="text-muted">Enter a domain or IP</small>
+  <!-- RIGHT: heat map placeholder -->
+  <div class="col-12 col-lg-7 col-xl-8">
+    <div class="card p-0 shadow-sm" style="min-height:60vh;">
+      <div class="p-3 border-bottom">
+        <h2 class="h5 mb-0">Global Attack Heat Map</h2>
+      </div>
+      <div id="world-map" style="height:calc(100vh - 220px); background:#0f141a;"></div>
     </div>
-
-    <form method="post" action="{% url 'breaches:scan_target' %}" class="d-flex gap-2">
-      {% csrf_token %}
-      <input name="target" type="text" class="form-control" placeholder="example.com or 1.2.3.4" required>
-      <button class="btn btn-primary">Scan</button>
-    </form>
   </div>
+</div>
 
-  {% if scans %}
-    <div class="card p-3 shadow-sm mt-3">
-      <h3 class="h6 mb-2">Recent scans</h3>
-      <ul class="list-group list-group-flush">
-        {% for s in scans %}
-          <li class="list-group-item bg-transparent d-flex justify-content-between align-items-center">
-            <span>
-              <strong>{{ s.ip }}</strong>
-              {% if s.hostnames and s.hostnames|length %} — {{ s.hostnames|join:", " }}{% endif %}
-              {% if s.org %}<span class="ms-2 small text-muted">{{ s.org }}</span>{% endif %}
-              {% if s.os %}<span class="ms-2 small text-muted">OS: {{ s.os }}</span>{% endif %}
-              {% if s.ports and s.ports|length %}
-                <span class="ms-2 small text-muted">ports: {{ s.ports|join:", " }}</span>
-              {% endif %}
-            </span>
-            <span class="small text-muted">{{ s.last_seen|date:"Y-m-d H:i" }}</span>
-          </li>
-        {% endfor %}
-      </ul>
-    </div>
-  {% endif %}
+<!-- Optional: keep the left column visible while scrolling the map -->
+<style>
+  @media (min-width: 992px) { /* lg and up */
+    #left-col { position: sticky; top: 1rem; align-self: flex-start; }
+  }
+</style>
+
+<!-- =======================
+     NEW FULL-WIDTH SECTION
+     ======================= -->
+<section id="bottom-section" class="mt-4">
+  <div class="card p-3 shadow-sm w-100" style="background:#0f141a; border:1px solid #1f2a33;">
+
+  </div>
 </section>
 
 {% endblock %}
