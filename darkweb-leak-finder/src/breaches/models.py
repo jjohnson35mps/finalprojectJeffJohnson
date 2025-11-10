@@ -9,8 +9,9 @@
 # IsSubscriptionFree. Adds a convenience property for the absolute logo URL.
 
 from __future__ import annotations
-from django.db import models
 from core.models import TimeStampedModel
+from django.db import models
+from django.utils import timezone
 
 class EmailIdentity(TimeStampedModel):
     address = models.EmailField(unique=True)
@@ -66,3 +67,20 @@ class BreachHit(TimeStampedModel):
             return ""
         # Works whether .png/.svg; HIBP hosts both under this base.
         return f"https://haveibeenpwned.com/Content/Images/PwnedLogos/{self.logo_path}"
+
+class ShodanFinding(models.Model):
+    """Normalized Shodan host result"""
+    ip = models.GenericIPAddressField()
+    hostnames = models.JSONField(default=list, blank=True)   # list of hostnames
+    ports = models.JSONField(default=list, blank=True)       # list of ints
+    org = models.CharField(max_length=255, blank=True)
+    os = models.CharField(max_length=255, blank=True)
+    raw = models.JSONField(default=dict, blank=True)         # full Shodan host JSON
+    created_on = models.DateTimeField(auto_now_add=True)
+    last_seen = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        ordering = ["-last_seen", "-id"]
+
+    def __str__(self):
+        return f"{self.ip} ({', '.join(self.hostnames or [])})"
