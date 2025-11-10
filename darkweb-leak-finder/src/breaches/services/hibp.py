@@ -2,13 +2,13 @@
 # Robust HIBP client with logging and last-call metadata.
 from __future__ import annotations
 import os, time, logging
-from typing import Any, List
+from typing import Any, List, Optional
 from urllib.parse import quote
 import requests
 
 logger = logging.getLogger("breaches")
 
-class HibpError(Exception): pass
+class HibpError(Exception): ...
 class HibpAuthError(HibpError): """HIBP API key missing/invalid (HTTP 401)."""
 class HibpRateLimitError(HibpError): """Rate limit hit (HTTP 429)."""
 
@@ -24,13 +24,32 @@ class HibpClient:
             "hibp-api-key": self.key or "missing",
             "Accept": "application/json",
         })
-        # expose last call metadata for the view to show
+        # Expose last call metadata for the UI
         self.last_status: int | None = None
         self.last_url: str | None = None
         self.last_items: int | None = None
         self.last_ct: str | None = None
 
+    # -------------------------
+    # Public API
+    # -------------------------
     def breaches_for_account(self, email: str) -> List[dict[str, Any]]:
+        """
+        Return a normalized list of breach dicts with this schema:
+          {
+            "breach_name": str,
+            "title": str,              # same as breach_name
+            "domain": str,
+            "breach_date": str|None,   # 'YYYY-MM-DD'
+            "occurred_on": str|None,   # same as breach_date
+            "pwn_count": int,
+            "data_classes": list[str],
+            "description": str,
+          }
+        Notes:
+        - Records without a Name are dropped (prevents 'Unknown' cards).
+        - LogoPath is intentionally omitted.
+        """
         if not self.key:
             logger.info("[HIBP] no API key set; returning [] (demo mode)")
             self.last_status, self.last_url, self.last_items = None, None, 0
@@ -40,7 +59,8 @@ class HibpClient:
         url = f"{self.BASE}/breachedaccount/{account}"
         params = {"truncateResponse": "false", "includeUnverified": "true"}
 
-        time.sleep(1.6)  # be polite; helps with 429s
+        # polite delay to help avoid 429s
+        time.sleep(1.6)
         resp = self.session.get(url, params=params, timeout=20)
 
         self.last_status = resp.status_code
@@ -64,6 +84,59 @@ class HibpClient:
             return []
 
         data = resp.json()
-        self.last_items = len(data) if isinstance(data, list) else 0
-        logger.info("[HIBP] items=%s", self.last_items)
-        return data if isinstance(data, list) else []
+        if not isinstance(data, list):
+            self.last_items = 0
+            return []
+
+        # Normalize and DROP nameless entries (None)
+        normalized = []
+        for raw in data:
+            if isinstance(raw, dict):
+                nb = self._normalize_breach(raw)
+                if nb is not None:
+                    normalized.append(nb)
+
+        self.last_items = len(normalized)
+        logger.info("[HIBP] items=%s (normalized)", self.last_items)
+        return normalized
+
+    # -------------------------
+    # Internals
+    # -------------------------
+    def _normalize_breach(self, b: dict[str, Any]) -> Optional[dict[str, Any]]:
+        """
+        Map HIBP fields to our schema and drop any logo-related fields.
+        Returns None if 'Name' is missing/blank.
+        """
+        name = (b.get("Name") or "").strip()
+        if not name:
+            # Drop nameless records to avoid "Unknown" UI blocks
+            return None
+
+        domain = (b.get("Domain") or "").strip()
+        breach_date = (b.get("BreachDate") or None)
+        pwn_count = int(b.get("PwnCount") or 0)
+
+        # HIBP supplies a list for DataClasses; be liberal anyway.
+        dc = b.get("DataClasses")
+        if isinstance(dc, (list, tuple)):
+            data_classes = [str(x).strip() for x in dc if str(x).strip()]
+        elif isinstance(dc, str):
+            # Fallback if a CSV string ever appears
+            data_classes = [s.strip() for s in dc.split(",") if s.strip()]
+        else:
+            data_classes = []
+
+        description = (b.get("Description") or "").strip()
+
+        # NEVER include LogoPath/logo_path
+        return {
+            "breach_name": name,
+            "title": name,               # convenience for templates
+            "domain": domain,
+            "breach_date": breach_date,
+            "occurred_on": breach_date,
+            "pwn_count": pwn_count,
+            "data_classes": data_classes,
+            "description": description,
+        }

@@ -10,7 +10,6 @@
   </div>
 {% endif %}
 
-<!-- Identities -->
 <section id="identities" class="mb-4">
   <div class="card p-3 shadow-sm">
     <h2 class="h5 mb-3">Identities</h2>
@@ -24,8 +23,14 @@
       <ul class="list-group list-group-flush">
         {% for i in identities %}
           <li class="list-group-item bg-transparent d-flex justify-content-between align-items-center">
-            <a href="#" class="text-decoration-none">{{ i.address }}</a>
-            <a href="{% url 'breaches:scan' i.pk %}" class="btn btn-sm btn-outline-light">Scan</a>
+            {# FIX 1: link to detail page #}
+            <a href="{% url 'breaches:identity_detail' i.pk %}" class="text-decoration-none">
+              {{ i.address }}
+            </a>
+
+            {# FIX 2 (optional): prefer explicit name over legacy alias #}
+            <a href="{% url 'breaches:scan_identity' pk=i.pk %}" class="btn btn-sm btn-outline-light">Scan</a>
+            {# if you want to keep the alias, your existing {% url 'breaches:scan' i.pk %} still works #}
           </li>
         {% endfor %}
       </ul>
@@ -35,7 +40,6 @@
   </div>
 </section>
 
-<!-- Scan (Shodan) -->
 <section id="scan" class="mt-4">
   <div class="card p-3 shadow-sm">
     <div class="d-flex align-items-center justify-content-between mb-2">

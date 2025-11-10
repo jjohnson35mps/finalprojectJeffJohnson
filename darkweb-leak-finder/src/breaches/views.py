@@ -101,7 +101,7 @@ def scan_identity(request, pk: int):
         messages.error(request, f"Scan failed: {ex}")
 
     # back to dashboard (you can change later to an identity detail view)
-    return redirect("breaches:dashboard")
+    return redirect("breaches:identity_detail", pk=identity.pk)
 
 # -------- Scan target (Shodan) --------
 def scan_target(request):
@@ -158,3 +158,18 @@ def scan_target(request):
         messages.error(request, f"Unexpected error: {e}")
 
     return redirect("breaches:dashboard")
+
+def identity_detail(request, pk: int):
+    identity = get_object_or_404(EmailIdentity, pk=pk)
+    hits = (
+        BreachHit.objects
+        .filter(identity=identity)
+        .exclude(breach_name__isnull=True)
+        .exclude(breach_name__exact="")
+        .exclude(breach_name__iexact="unknown")
+        .order_by("-occurred_on", "-added_on", "-id")
+    )
+    return render(request, "breaches/identity_detail.html", {
+        "identity": identity,
+        "hits": hits,             # <- expose hits
+    })
