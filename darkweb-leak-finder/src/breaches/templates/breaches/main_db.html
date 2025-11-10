@@ -12,7 +12,7 @@
 
 <section id="identities" class="mb-4">
   <div class="card p-3 shadow-sm">
-    <h2 class="h5 mb-3">Identities</h2>
+    <h2 class="h5 mb-3">Email Data Breach Check</h2>
     <form method="post" action="{% url 'breaches:add' %}" class="d-flex gap-2 mb-3">
       {% csrf_token %}
       <input name="email" type="email" class="form-control" placeholder="email@example.com" required>
@@ -43,7 +43,7 @@
 <section id="scan" class="mt-4">
   <div class="card p-3 shadow-sm">
     <div class="d-flex align-items-center justify-content-between mb-2">
-      <h2 class="h5 mb-0">Scan Target</h2>
+      <h2 class="h5 mb-0">Domain or IP Port Scan</h2>
       <small class="text-muted">Enter a domain or IP</small>
     </div>
 
@@ -52,24 +52,35 @@
       <input name="target" type="text" class="form-control" placeholder="example.com or 1.2.3.4" required>
       <button class="btn btn-primary">Scan</button>
     </form>
-  </div>
+  <!--</div>-->
 
   {% if scans %}
-    <div class="card p-3 shadow-sm mt-3">
-      <h3 class="h6 mb-2">Recent scans</h3>
-      <ul class="list-group list-group-flush">
+    <!--<div class="card p-3 shadow-sm mt-3">-->
+      <h3 class="h6 mb-2 pt-2">Recent scans</h3>
+      <ul class="list-group list-group-flush" id="recent-scans">
         {% for s in scans %}
           <li class="list-group-item bg-transparent d-flex justify-content-between align-items-center">
             <span>
-              <strong>{{ s.ip }}</strong>
-              {% if s.hostnames and s.hostnames|length %} — {{ s.hostnames|join:", " }}{% endif %}
-              {% if s.org %}<span class="ms-2 small text-muted">{{ s.org }}</span>{% endif %}
-              {% if s.os %}<span class="ms-2 small text-muted">OS: {{ s.os }}</span>{% endif %}
-              {% if s.ports and s.ports|length %}
-                <span class="ms-2 small text-muted">ports: {{ s.ports|join:", " }}</span>
+              <strong>{{ s.ip }}</strong><br>
+
+              {% if s.hostnames and s.hostnames|length %}
+                <span class="small text-muted">Hostnames:</span> {{ s.hostnames|join:", " }}<br>
               {% endif %}
+
+              {% if s.org %}
+                <span class="small text-muted">Organization:</span> {{ s.org }}<br>
+              {% endif %}
+
+              {% if s.os %}
+                <span class="small text-muted">OS:</span> {{ s.os }}<br>
+              {% endif %}
+
+              {% if s.ports and s.ports|length %}
+                <span class="small text-muted">Ports:</span> {{ s.ports|join:", " }}<br>
+              {% endif %}
+
+              <span class="small text-muted">Scan Time:</span> {{ s.last_seen|date:"Y-m-d H:i" }}
             </span>
-            <span class="small text-muted">{{ s.last_seen|date:"Y-m-d H:i" }}</span>
           </li>
         {% endfor %}
       </ul>
