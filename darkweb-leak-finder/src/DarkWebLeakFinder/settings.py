@@ -68,6 +68,7 @@ INSTALLED_APPS = [
     "dashboard",
     "django.contrib.humanize",
     "security_ticker",
+    "threatmap",
 ]
 
 MIDDLEWARE = [

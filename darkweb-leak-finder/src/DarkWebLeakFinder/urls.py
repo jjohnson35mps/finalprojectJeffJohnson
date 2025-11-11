@@ -28,4 +28,5 @@ urlpatterns = [
     path("dashboard/", include(("dashboard.urls", "dashboard"), namespace="dashboard")),
     path("core/", include(("core.urls", "core"), namespace="core")),
     path("api/ticker/", include(("security_ticker.urls", "security_ticker"), namespace="security_ticker")),
+    path("threatmap/", include("threatmap.urls")),
 ]
