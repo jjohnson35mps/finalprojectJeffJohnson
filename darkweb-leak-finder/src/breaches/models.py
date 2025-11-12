@@ -1,22 +1,20 @@
 # src/breaches/models.py
-# ----------------------
-# Core data models for Dark Web Leak Finder.
-# EmailIdentity stores a unique email address to monitor.
-# BreachHit stores a (identity, breach) association with optional domain/date.
-# src/breaches/models.py
 # ------------------------------------------------------------
-# Stores the complete HIBP breach model including IsStealerLog and
-# IsSubscriptionFree. Adds a convenience property for the absolute logo URL.
+# Core data models for Dark Web Leak Finder.
 
 from __future__ import annotations
-from core.models import TimeStampedModel
+
 from django.db import models
 from django.utils import timezone
+from core.models import TimeStampedModel
+
 
 class EmailIdentity(TimeStampedModel):
     address = models.EmailField(unique=True)
-    def __str__(self) -> str:  # trivial
+
+    def __str__(self) -> str:
         return self.address
+
 
 class BreachHit(TimeStampedModel):
     identity = models.ForeignKey(
@@ -24,28 +22,29 @@ class BreachHit(TimeStampedModel):
     )
 
     # Core identity of the breach
-    breach_name = models.CharField(max_length=200)             # "Name"
-    domain = models.CharField(max_length=255, blank=True)      # "Domain"
-    occurred_on = models.DateField(null=True, blank=True)      # "BreachDate"
+    breach_name = models.CharField(max_length=200)                 # HIBP "Name"
+    domain = models.CharField(max_length=255, blank=True, default="")
+    occurred_on = models.DateField(null=True, blank=True)          # HIBP "BreachDate"
 
     # Full model fields
-    title = models.CharField(max_length=255, blank=True)       # "Title"
-    description = models.TextField(blank=True)                 # "Description" (HTML)
-    pwn_count = models.IntegerField(null=True, blank=True)     # "PwnCount"
-    data_classes = models.JSONField(null=True, blank=True)     # "DataClasses"
+    title = models.CharField(max_length=255, blank=True, default="")           # "Title"
+    description = models.TextField(blank=True, default="")                     # "Description" (HTML)
+    pwn_count = models.BigIntegerField(null=True, blank=True)                  # "PwnCount"
+    data_classes = models.JSONField(default=list, blank=True)                  # "DataClasses" -> list[str]
 
-    is_verified = models.BooleanField(null=True, blank=True)       # "IsVerified"
-    is_sensitive = models.BooleanField(null=True, blank=True)      # "IsSensitive"
-    is_fabricated = models.BooleanField(null=True, blank=True)     # "IsFabricated"
-    is_spam_list = models.BooleanField(null=True, blank=True)      # "IsSpamList"
-    is_retired = models.BooleanField(null=True, blank=True)        # "IsRetired"
-    is_malware = models.BooleanField(null=True, blank=True)        # "IsMalware"
-    is_stealer_log = models.BooleanField(null=True, blank=True)    # "IsStealerLog"
-    is_subscription_free = models.BooleanField(null=True, blank=True)  # "IsSubscriptionFree"
+    # Flags (never nullable; default False)
+    is_verified = models.BooleanField(default=False)
+    is_sensitive = models.BooleanField(default=False)
+    is_fabricated = models.BooleanField(default=False)
+    is_spam_list = models.BooleanField(default=False)
+    is_retired = models.BooleanField(default=False)
+    is_malware = models.BooleanField(default=False)
+    is_stealer_log = models.BooleanField(default=False)
+    is_subscription_free = models.BooleanField(default=False)
 
-    added_on = models.DateField(null=True, blank=True)         # "AddedDate"
-    modified_on = models.DateField(null=True, blank=True)      # "ModifiedDate"
-    logo_path = models.CharField(max_length=500, blank=True)   # "LogoPath" (filename)
+    added_on = models.DateField(null=True, blank=True)             # "AddedDate"
+    modified_on = models.DateField(null=True, blank=True)          # "ModifiedDate"
+    logo_path = models.CharField(max_length=500, blank=True, default="")       # "LogoPath" (filename)
 
     class Meta:
         unique_together = ("identity", "breach_name")
@@ -53,28 +52,26 @@ class BreachHit(TimeStampedModel):
             models.Index(fields=["breach_name"]),
             models.Index(fields=["identity", "breach_name"]),
         ]
+        ordering = ["-occurred_on", "-added_on", "-id"]
 
-    def __str__(self) -> str:  # trivial
+    def __str__(self) -> str:
         return f"{self.identity.address} -> {self.breach_name}"
 
     @property
     def logo_url(self) -> str:
-        """
-        Build the public logo URL. HIBP typically returns only a filename
-        like 'Adobe.png', which lives under the Content/Images/PwnedLogos path.
-        """
+        """Public logo URL (HIBP hosts images under this path)."""
         if not self.logo_path:
             return ""
-        # Works whether .png/.svg; HIBP hosts both under this base.
         return f"https://haveibeenpwned.com/Content/Images/PwnedLogos/{self.logo_path}"
+
 
 class ShodanFinding(models.Model):
     """Normalized Shodan host result"""
     ip = models.GenericIPAddressField()
-    hostnames = models.JSONField(default=list, blank=True)   # list of hostnames
-    ports = models.JSONField(default=list, blank=True)       # list of ints
-    org = models.CharField(max_length=255, blank=True)
-    os = models.CharField(max_length=255, blank=True)
+    hostnames = models.JSONField(default=list, blank=True)   # list[str]
+    ports = models.JSONField(default=list, blank=True)       # list[int]
+    org = models.CharField(max_length=255, blank=True, default="")
+    os = models.CharField(max_length=255, blank=True, default="")
     raw = models.JSONField(default=dict, blank=True)         # full Shodan host JSON
     created_on = models.DateTimeField(auto_now_add=True)
     last_seen = models.DateTimeField(default=timezone.now)

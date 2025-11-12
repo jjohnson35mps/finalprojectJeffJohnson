@@ -155,3 +155,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Security ticker cache settings
 SECURITY_TICKER_CACHE_TIMEOUT = 3600  # 1 hour
+
+THREATMAP = {
+    "PROVIDER": "cloudflare",
+    "CACHE_SECONDS": 300,     # cache server-side for 5 minutes
+    "POINT_LIMIT": 20,        # render more countries if available
+    "AUTO_REFRESH_MS": 300000 # client refresh every 5 minutes
+}

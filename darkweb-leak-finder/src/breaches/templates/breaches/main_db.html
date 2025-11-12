@@ -1,15 +1,6 @@
 {% extends "core/base.html" %}
 {% block content %}
 
-<!-- flash messages -->
-{% if messages %}
-  <div class="mb-3">
-    {% for m in messages %}
-      <div class="alert alert-{{ m.tags|default:"secondary" }} mb-2">{{ m }}</div>
-    {% endfor %}
-  </div>
-{% endif %}
-
 <div class="row g-4 align-items-start">
   <!-- LEFT: cards -->
   <div class="col-12 col-lg-5 col-xl-4" id="left-col">
@@ -30,7 +21,13 @@
                 <a href="{% url 'breaches:identity_detail' i.pk %}" class="text-decoration-none">
                   {{ i.address }}
                 </a>
-                <a href="{% url 'breaches:scan_identity' pk=i.pk %}" class="btn btn-sm btn-outline-light">Scan</a>
+                  <form method="post"
+                      action="{% url 'breaches:scan_identity' pk=i.pk %}"
+                      class="m-0 d-inline"
+                      onsubmit="const b=this.querySelector('button'); if(b){b.disabled=true; b.textContent='Scanning…';}">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-sm btn-outline-light">Scan</button>
+                </form>
               </li>
             {% endfor %}
           </ul>
@@ -84,16 +81,25 @@
   </div>
 
   <!-- RIGHT: heat map placeholder -->
-  <div class="col-12 col-lg-7 col-xl-8">
-    <div class="card p-0 shadow-sm" style="min-height:60vh;">
-      <div class="p-3 border-bottom">
-        <h2 class="h5 mb-0">Global Attack Heat Map</h2>
-      </div>
-      <!--<div id="world-map" style="height:calc(100vh - 220px); background:#0f141a;"></div>-->
-        <div {% include "threatmap/heatmap.html" %}</div>
+{# RIGHT: heat map #}
+<div class="col-12 col-lg-7 col-xl-8">
+  <div class="card p-0 shadow-sm" style="min-height:60vh;">
+    <div class="p-3 border-bottom">
+      <h2 class="h5 mb-0">Global Attack Heat Map</h2>
     </div>
+
+    <!-- The map needs THIS id -->
+    <div id="tm-world-map" style="height:calc(100vh - 220px); background:#0f141a;"></div>
   </div>
 </div>
+
+{# put these once per page (base template is fine) #}
+{% load static %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet.heat/dist/leaflet-heat.js"></script>
+<script src="{% static 'threatmap/js/heatmap.js' %}"></script>
+
 
 <!-- Optional: keep the left column visible while scrolling the map -->
 <style>
