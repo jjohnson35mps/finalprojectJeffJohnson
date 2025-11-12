@@ -21,13 +21,26 @@
                 <a href="{% url 'breaches:identity_detail' i.pk %}" class="text-decoration-none">
                   {{ i.address }}
                 </a>
+
+                <div class="d-flex gap-2">
+                  {# POST Scan with loading state #}
                   <form method="post"
-                      action="{% url 'breaches:scan_identity' pk=i.pk %}"
-                      class="m-0 d-inline"
-                      onsubmit="const b=this.querySelector('button'); if(b){b.disabled=true; b.textContent='Scanning…';}">
-                  {% csrf_token %}
-                  <button type="submit" class="btn btn-sm btn-outline-light">Scan</button>
-                </form>
+                        action="{% url 'breaches:scan_identity' pk=i.pk %}"
+                        class="m-0"
+                        onsubmit="const b=this.querySelector('button'); if(b){b.disabled=true; b.textContent='Scanning…';}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-sm btn-outline-light">Scan</button>
+                  </form>
+
+                  {# POST Remove with confirm #}
+                  <form method="post"
+                        action="{% url 'breaches:delete_identity' pk=i.pk %}"
+                        class="m-0"
+                        onsubmit="return confirm('Remove {{ i.address }}? This will also delete its saved breach results.');">
+                    {% csrf_token %}
+                    <button class="btn btn-sm btn-outline-danger">Remove</button>
+                  </form>
+                </div>
               </li>
             {% endfor %}
           </ul>
@@ -55,23 +68,42 @@
           <h3 class="h6 mb-2 pt-2">Recent scans</h3>
           <ul class="list-group list-group-flush" id="recent-scans">
             {% for s in scans %}
-              <li class="list-group-item bg-transparent d-flex justify-content-between align-items-center">
-                <span>
-                  <strong>{{ s.ip }}</strong><br>
-                  {% if s.hostnames and s.hostnames|length %}
-                    <span class="small text-muted">Hostnames:</span> {{ s.hostnames|join:", " }}<br>
-                  {% endif %}
-                  {% if s.org %}
-                    <span class="small text-muted">Organization:</span> {{ s.org }}<br>
-                  {% endif %}
-                  {% if s.os %}
-                    <span class="small text-muted">OS:</span> {{ s.os }}<br>
-                  {% endif %}
-                  {% if s.ports and s.ports|length %}
-                    <span class="small text-muted">Open Ports:</span> {{ s.ports|join:", " }}<br>
-                  {% endif %}
-                  <span class="small text-muted">Scan Time:</span> {{ s.last_seen|date:"Y-m-d H:i" }}
-                </span>
+              <li class="list-group-item bg-transparent">
+                <div class="d-flex justify-content-between align-items-start gap-2">
+                  <span>
+                    <strong>{{ s.ip }}</strong><br>
+                    {% if s.hostnames and s.hostnames|length %}
+                      <span class="small text-muted">Hostnames:</span> {{ s.hostnames|join:", " }}<br>
+                    {% endif %}
+                    {% if s.org %}
+                      <span class="small text-muted">Organization:</span> {{ s.org }}<br>
+                    {% endif %}
+                    {% if s.os %}
+                      <span class="small text-muted">OS:</span> {{ s.os }}<br>
+                    {% endif %}
+                    {% if s.ports and s.ports|length %}
+                      <span class="small text-muted">Open Ports:</span> {{ s.ports|join:", " }}<br>
+                    {% endif %}
+                    <span class="small text-muted">Scan Time:</span> {{ s.last_seen|date:"Y-m-d H:i" }}
+                  </span>
+
+                  <div class="d-flex gap-2">
+                    {# Quick rescan (pre-fills target with this IP) #}
+                    <form method="post" action="{% url 'breaches:scan_target' %}" class="m-0"
+                          onsubmit="const b=this.querySelector('button'); if(b){b.disabled=true; b.textContent='Scanning…';}">
+                      {% csrf_token %}
+                      <input type="hidden" name="target" value="{{ s.ip }}">
+                      <button class="btn btn-sm btn-outline-light" type="submit">Rescan</button>
+                    </form>
+
+                    {# Remove this saved scan #}
+                    <form method="post" action="{% url 'breaches:delete_scan' pk=s.pk %}" class="m-0"
+                          onsubmit="return confirm('Remove saved Shodan scan for {{ s.ip }}?');">
+                      {% csrf_token %}
+                      <button class="btn btn-sm btn-outline-danger" type="submit">Remove</button>
+                    </form>
+                  </div>
+                </div>
               </li>
             {% endfor %}
           </ul>
