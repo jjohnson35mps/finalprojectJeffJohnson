@@ -14,13 +14,14 @@
 </div>
 
 {% if hits %}
-  <div class="list-group">
-    {% for h in hits %}
-      {% if h.breach_name and h.breach_name|lower != 'unknown' %}
+    <div class="list-group">
+      {% for h in hits %}
         <div class="list-group-item bg-transparent border-secondary breach-card">
           <div class="d-flex justify-content-between align-items-start">
-            <strong class="text-white">{{ h.title|default:h.breach_name }}</strong>
-            <small class="muted">{{ h.occurred_on|date:"Y-m-d" }}</small>
+            <strong class="text-white">{{ h.title|default:h.breach_name|default:"(untitled breach)" }}</strong>
+            <small class="muted">
+              {% if h.occurred_on %}{{ h.occurred_on|date:"Y-m-d" }}{% else %}-{% endif %}
+            </small>
           </div>
 
           {% if h.domain %}
@@ -34,7 +35,7 @@
             <div class="small muted">Pwned: {{ h.pwn_count|intcomma }}</div>
           {% endif %}
 
-          {% with dc_list=h.data_classes|to_list %}
+          {% with dc_list=h.data_classes %}
             {% if dc_list %}
               <div class="mt-2 d-flex flex-wrap gap-2">
                 {% for dc in dc_list %}
@@ -48,9 +49,10 @@
             <div class="small mt-2 text-body-secondary">{{ h.description|safe }}</div>
           {% endif %}
         </div>
-      {% endif %}
-    {% endfor %}
-  </div>
+      {% empty %}
+        <div class="alert alert-info">No breaches recorded for this identity yet.</div>
+      {% endfor %}
+    </div>
 {% else %}
   <div class="alert alert-info">No breaches recorded for this identity yet.</div>
 {% endif %}
