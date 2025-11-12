@@ -232,3 +232,19 @@ def identity_detail(request, pk: int):
         "identity": identity,
         "hits": hits,             # <- expose hits
     })
+
+@require_POST
+def delete_identity(request, pk: int):
+    identity = get_object_or_404(EmailIdentity, pk=pk)
+    addr = identity.address
+    identity.delete()  # BreachHit rows will cascade-delete (FK CASCADE)
+    messages.success(request, f"Removed identity: {addr}")
+    return redirect("breaches:dashboard")
+
+@require_POST
+def delete_scan(request, pk: int):
+    scan = get_object_or_404(ShodanFinding, pk=pk)
+    ip = scan.ip
+    scan.delete()
+    messages.success(request, f"Removed Shodan scan for {ip}.")
+    return redirect("breaches:dashboard")
