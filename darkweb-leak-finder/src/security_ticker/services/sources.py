@@ -1,3 +1,7 @@
+# INF601 - Advanced Programming in Python
+# Jeff Johnson
+# Final Project
+
 from __future__ import annotations
 import os, time, requests
 from typing import List, Dict, Any, Tuple

@@ -1,3 +1,6 @@
+# INF601 - Advanced Programming in Python
+# Jeff Johnson
+# Final Project
 # src/tests/test_modularity_breaches.py
 # ------------------------------------------------------------
 # Jeff Johnson — INF 601 Advanced Python — Final Project

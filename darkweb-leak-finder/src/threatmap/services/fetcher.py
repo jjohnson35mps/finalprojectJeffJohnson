@@ -1,3 +1,6 @@
+# INF601 - Advanced Programming in Python
+# Jeff Johnson
+# Final Project
 # src/threatmap/services/fetcher.py
 """
 Fetcher: thin layer between views and providers.

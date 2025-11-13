@@ -1,8 +1,7 @@
+# INF601 - Advanced Programming in Python
+# Jeff Johnson
+# Final Project
 # src/dashboard/views.py
-# ----------------------
-# Dashboard pages:
-# - home: list all EmailIdentity rows (newest first)
-# - detail: show one identity with its BreachHit rows
 
 from django.shortcuts import render, get_object_or_404
 from breaches.models import EmailIdentity

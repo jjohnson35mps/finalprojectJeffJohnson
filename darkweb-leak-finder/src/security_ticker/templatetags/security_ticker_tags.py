@@ -1,4 +1,8 @@
+# INF601 - Advanced Programming in Python
+# Jeff Johnson
+# Final Project
 # security_ticker/templatetags/security_ticker_tags.py
+
 from django import template
 
 register = template.Library()

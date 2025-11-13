@@ -1,3 +1,6 @@
+# INF601 - Advanced Programming in Python
+# Jeff Johnson
+# Final Project
 # src/tests/test_modularity_core_dependency.py
 # ------------------------------------------------------------
 # Not a failure of modularity; just asserts declared dependency on core templates.

@@ -1,3 +1,6 @@
+# INF601 - Advanced Programming in Python
+# Jeff Johnson
+# Final Project
 # Placeholder manage.py (replace after running django-admin startproject)
 # This exists so the repo looks complete before you run:
 #   django-admin startproject DarkWebLeakFinder src

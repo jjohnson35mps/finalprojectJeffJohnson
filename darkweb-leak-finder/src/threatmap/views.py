@@ -1,4 +1,8 @@
+# INF601 - Advanced Programming in Python
+# Jeff Johnson
+# Final Project
 # src/threatmap/views.py
+
 from django.http import JsonResponse
 from .services.fetcher import get_points
 from .conf import conf_get
