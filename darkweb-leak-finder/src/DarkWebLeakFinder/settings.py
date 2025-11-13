@@ -24,6 +24,8 @@ load_dotenv(BASE_DIR / ".env")  # reads src/.env at server start
 SHODAN_API_KEY   = os.getenv("SHODAN_API_KEY")
 HIBP_API_KEY     = os.getenv("HIBP_API_KEY")
 HIBP_USER_AGENT  = os.getenv("HIBP_USER_AGENT")
+CLOUDFLARE_RADAR_TOKEN = os.environ.get("CLOUDFLARE_RADAR_TOKEN", "")
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/

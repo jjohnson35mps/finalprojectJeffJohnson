@@ -1,5 +1,6 @@
 {% extends "core/base.html" %}
 {% block content %}
+{% load static %}
 
 <div class="row g-4 align-items-start">
   <!-- LEFT: cards -->
@@ -38,7 +39,7 @@
                         class="m-0"
                         onsubmit="return confirm('Remove {{ i.address }}? This will also delete its saved breach results.');">
                     {% csrf_token %}
-                    <button class="btn btn-sm btn-outline-danger">Remove</button>
+                    <button type="submit" class="btn btn-sm btn-outline-danger">Remove</button>
                   </form>
                 </div>
               </li>
@@ -112,31 +113,94 @@
     </section>
   </div>
 
-  <!-- RIGHT: heat map placeholder -->
-{# RIGHT: heat map #}
-<div class="col-12 col-lg-7 col-xl-8">
-  <div class="card p-0 shadow-sm" style="min-height:60vh;">
-    <div class="p-3 border-bottom">
-      <h2 class="h5 mb-0">Global Attack Heat Map</h2>
-    </div>
+  {# RIGHT: heat map + sidebar #}
+  <div class="col-12 col-lg-7 col-xl-8">
+    <div class="card p-0 shadow-sm" style="min-height:60vh;">
+      <div class="p-3 border-bottom d-flex justify-content-between align-items-center">
+        <div class="d-flex align-items-center gap-2">
+          <h2 class="h5 mb-0">Global Attack Heat Map</h2>
+          <!-- Source selector -->
+          <select id="tm-radar-source" class="form-select form-select-sm ms-2" style="width:auto;">
+            <option value="layer7_origin" selected>Application Attack Point of Origin</option>
+            <option value="layer7_target">Application Attack Target</option>
+            <option value="layer3_origin">Network Attack Point of Origin</option>
+            <option value="layer3_target">Network Attack Target</option>
+          </select>
+        </div>
+        <small class="text-muted" id="tm-meta"></small>
+      </div>
 
-    <!-- The map needs THIS id -->
-    <div id="tm-world-map" style="height:calc(100vh - 220px); background:#0f141a;"></div>
+      <div class="row g-0">
+        <!-- MAP -->
+        <div class="col-12 col-xl-9">
+          <div id="tm-world-map" class="tm-map"></div>
+        </div>
+
+        <!-- SIDEBAR -->
+        <div class="col-12 col-xl-3 border-top border-xl-start border-secondary-subtle">
+          <div class="p-3 tm-sidebar" id="tm-sidebar">
+            <h3 class="h6 text-uppercase mb-3 text-muted">Attack Snapshot</h3>
+
+            <div class="mb-3">
+              <h4 class="h6 mb-1">Top Countries</h4>
+              <p class="small text-muted mb-2">
+                Percentage of all attack activity in last 24h
+              </p>
+              <ol class="list-unstyled small mb-0" id="tm-top-countries">
+                <!-- filled by JS -->
+              </ol>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
 {# put these once per page (base template is fine) #}
-{% load static %}
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script src="https://unpkg.com/leaflet.heat/dist/leaflet-heat.js"></script>
-<script src="{% static 'threatmap/js/heatmap.js' %}"></script>
-
+<script src="{% static 'threatmap/js/heatmap.js' %}?v=5"></script>
 
 <!-- Optional: keep the left column visible while scrolling the map -->
 <style>
   @media (min-width: 992px) { /* lg and up */
     #left-col { position: sticky; top: 1rem; align-self: flex-start; }
+  }
+
+  /* Threat map + sidebar */
+  .tm-map {
+    height: calc(100vh - 220px);
+    min-height: 360px;
+    background: #0f141a;
+  }
+
+  .tm-sidebar {
+    background: #0b1016;
+    height: 100%;
+  }
+
+  @media (min-width: 1200px) {
+    .tm-sidebar {
+      max-height: calc(100vh - 220px);
+      overflow-y: auto;
+    }
+  }
+
+  #tm-top-countries li {
+    padding: 0.15rem 0;
+  }
+
+  #tm-top-countries li span:last-child {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Make the main content band wider on large screens */
+  @media (min-width: 1200px) {
+    .container {
+      max-width: 1700px;  /* ~15–20% wider than default */
+    }
   }
 </style>
 
