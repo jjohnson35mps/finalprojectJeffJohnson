@@ -1,3 +1,6 @@
+# INF601 - Advanced Programming in Python
+# Jeff Johnson
+# Final Project
 # Reusable utilities (validators, parsing helpers, etc.)
 import re
 

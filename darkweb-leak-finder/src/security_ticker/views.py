@@ -1,4 +1,8 @@
+# INF601 - Advanced Programming in Python
+# Jeff Johnson
+# Final Project
 # src/security_ticker/views.py
+
 from django.http import JsonResponse
 from .services.sources import fetch_kev_items
 

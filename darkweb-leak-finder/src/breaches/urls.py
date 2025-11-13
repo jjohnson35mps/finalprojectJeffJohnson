@@ -1,6 +1,7 @@
+# INF601 - Advanced Programming in Python
+# Jeff Johnson
+# Final Project
 # src/breaches/urls.py
-# --------------------
-# Wires the URL /breaches/add/ to add_identity in views.py.
 
 from django.urls import path
 from . import views

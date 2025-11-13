@@ -1,6 +1,8 @@
+# INF601 - Advanced Programming in Python
+# Jeff Johnson
+# Final Project
 # src/core/urls.py
-# ----------------
-# Routes the site root to the dashboard and wires the breaches app under /breaches/.
+
 from django.urls import path, include
 
 urlpatterns = [

@@ -1,6 +1,7 @@
+# INF601 - Advanced Programming in Python
+# Jeff Johnson
+# Final Project
 # src/breaches/models.py
-# ------------------------------------------------------------
-# Core data models for Dark Web Leak Finder.
 
 from __future__ import annotations
 

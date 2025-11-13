@@ -1,5 +1,8 @@
+# INF601 - Advanced Programming in Python
+# Jeff Johnson
+# Final Project
 # src/dashboard/urls.py
-# ---------------------
+
 from django.urls import path
 from . import views
 

@@ -1,3 +1,6 @@
+# INF601 - Advanced Programming in Python
+# Jeff Johnson
+# Final Project
 """
 Django settings for DarkWebLeakFinder project.
 

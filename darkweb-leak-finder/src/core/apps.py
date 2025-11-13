@@ -1,3 +1,7 @@
+# INF601 - Advanced Programming in Python
+# Jeff Johnson
+# Final Project
+
 from django.apps import AppConfig
 
 class CoreConfig(AppConfig):

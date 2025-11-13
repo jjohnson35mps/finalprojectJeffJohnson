@@ -1,8 +1,7 @@
+# INF601 - Advanced Programming in Python
+# Jeff Johnson
+# Final Project
 # breaches/templatetags/breach_extras.py
-# ------------------------------------------------------------
-# Converts BreachHit.data_classes into a list so templates can loop
-# Works with: list/tuple, JSON string (e.g. '["Email","Passwords"]'),
-# or comma-separated string ('Email, Passwords').
 
 from django import template
 import json

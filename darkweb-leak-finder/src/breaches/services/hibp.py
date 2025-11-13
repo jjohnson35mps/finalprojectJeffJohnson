@@ -1,3 +1,6 @@
+# INF601 - Advanced Programming in Python
+# Jeff Johnson
+# Final Project
 # src/breaches/services/hibp.py
 # Robust HIBP client with logging and last-call metadata.
 from __future__ import annotations
