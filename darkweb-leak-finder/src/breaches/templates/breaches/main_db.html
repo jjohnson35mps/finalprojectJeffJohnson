@@ -2,6 +2,29 @@
 {% block content %}
 {% load static %}
 
+<!-- =======================
+     NEW FULL-WIDTH SECTION
+     ======================= -->
+<section id="attack-summary" class="mb-4">
+  <div class="attack-summary-bar d-flex justify-content-between align-items-center flex-wrap gap-2">
+    <div class="d-flex flex-wrap align-items-center gap-2">
+      <strong>ShadowScan: </strong>
+      <span class="text-muted small">
+        Email breach checks, exposed services, and live attack hotspots.
+      </span>
+    </div>
+    <div class="d-flex align-items-center gap-3">
+      <a href="#"
+         class="small text-decoration-none"
+         style="color:#93c5fd;"
+         data-bs-toggle="modal"
+         data-bs-target="#aboutThreatDashboardModal">
+        About this tool
+      </a>
+    </div>
+  </div>
+</section>
+
 <div class="row g-4 align-items-start">
   <!-- LEFT: cards -->
   <div class="col-12 col-lg-5 col-xl-4" id="left-col">
@@ -149,6 +172,17 @@
               <ol class="list-unstyled small mb-0" id="tm-top-countries">
                 <!-- filled by JS -->
               </ol>
+                <div class="card p-3 shadow-sm mt-3" style="background:#0f141a; border:1px solid #1f2a33;">
+                  <h2 class="h6 mb-2" style="color:#fff;">Network & Application Attacks</h2>
+                  <p style="color:#c7d0da; font-size:0.9rem;">
+                    This dashboard visualizes hostile traffic detected across the internet.
+                    <strong>Network-layer attacks</strong> include scanning, port probing, and DDoS events
+                    targeting infrastructure.
+                    <strong>Application-layer attacks</strong> represent malicious HTTP requests such as
+                    credential stuffing, API abuse, and web application exploitation attempts.
+                    Together, these signals provide visibility into global threat activity.
+                  </p>
+                </div>
             </div>
           </div>
         </div>
@@ -202,15 +236,58 @@
       max-width: 1700px;  /* ~15–20% wider than default */
     }
   }
+
+  /* dark_web.css or similar */
+  .attack-summary-bar {
+      background:#0f141a;
+      border:1px solid #1f2a33;
+      padding:1.1rem 1.5rem;  /* controls height */
+      min-height:64px;
+      border-radius:0.5rem;
+  }
 </style>
 
-<!-- =======================
-     NEW FULL-WIDTH SECTION
-     ======================= -->
-<section id="bottom-section" class="mt-4">
-  <div class="card p-3 shadow-sm w-100" style="background:#0f141a; border:1px solid #1f2a33;">
-
+<div class="modal fade" id="aboutThreatDashboardModal" tabindex="-1"
+     aria-labelledby="aboutThreatDashboardLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content bg-dark border border-secondary">
+      <div class="modal-header border-0">
+        <h5 class="modal-title" id="aboutThreatDashboardLabel">
+          About Dark Web Leak Finder &amp; ThreatMap
+        </h5>
+        <button type="button" class="btn-close btn-close-white"
+                data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body text-muted">
+        <p class="mb-3">
+          This dashboard is a proof-of-concept security analytics tool built for
+          graduate coursework in cybersecurity. It combines several data sources
+          to give a high-level view of identity exposure and global attack activity.
+        </p>
+        <ul class="mb-3">
+          <li>
+            <strong>Email Data Breach Check</strong> – looks up email addresses
+            against known breach data via public breach APIs (for example, Have I
+            Been Pwned) to highlight where identities may already be exposed.
+          </li>
+          <li>
+            <strong>Domain or IP Port Scan</strong> – summarizes recent Shodan-style
+            scan results so you can see internet-facing services and potential weak points.
+          </li>
+          <li>
+            <strong>Global Attack Heat Map</strong> – visualizes network-layer and
+            application-layer attack activity (such as DDoS, scanning, credential
+            stuffing, and web exploit attempts) by point of origin or target.
+          </li>
+        </ul>
+        <p class="small mb-0">
+          This tool is for educational and defensive security research only. It does
+          not perform offensive actions and should not be used to attack systems or services.
+        </p>
+      </div>
+    </div>
   </div>
-</section>
+</div>
+
 
 {% endblock %}
