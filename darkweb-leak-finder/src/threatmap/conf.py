@@ -1,8 +1,6 @@
 # INF601 - Advanced Programming in Python
 # Jeff Johnson
 # Final Project
-# src/threatmap/conf.py
-# Centralized settings for the threatmap app.
 
 from django.conf import settings
 

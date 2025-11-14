@@ -4,7 +4,6 @@
 # src/breaches/models.py
 
 from __future__ import annotations
-
 from django.db import models
 from django.utils import timezone
 from core.models import TimeStampedModel

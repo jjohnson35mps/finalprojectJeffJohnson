@@ -1,7 +1,6 @@
 # INF601 - Advanced Programming in Python
 # Jeff Johnson
 # Final Project
-# src/threatmap/providers/cloudflare.py
 
 from __future__ import annotations
 import logging, os, random

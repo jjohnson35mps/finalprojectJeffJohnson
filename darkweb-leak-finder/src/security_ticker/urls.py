@@ -1,7 +1,6 @@
 # INF601 - Advanced Programming in Python
 # Jeff Johnson
 # Final Project
-# security_ticker/urls.py
 
 from django.urls import path
 from .views import ticker_feed

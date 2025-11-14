@@ -1,7 +1,7 @@
 # INF601 - Advanced Programming in Python
 # Jeff Johnson
 # Final Project
-# src/breaches/services/shodan_client.py
+
 from __future__ import annotations
 import os
 import time

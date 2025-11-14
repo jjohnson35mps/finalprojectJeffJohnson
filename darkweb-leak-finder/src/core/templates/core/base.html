@@ -16,12 +16,27 @@
     <link rel="stylesheet" href="{% static 'security_ticker/css/ticker.css' %}">
   </head>
   <body class="bg-dark text-light">
-    <!-- Include the ticker bar (moved to top) -->
-    {% security_ticker %}
+    {# Ticker bar at the very top – only when logged in #}
+    {% if user.is_authenticated %}
+      {% security_ticker %}
+    {% endif %}
 
     <nav class="navbar navbar-expand-lg bg-dark" data-bs-theme="dark">
-      <div class="container">
-        <a class="navbar-brand text-light" href="{% url 'breaches:dashboard' %}">ShadowScan: Cyber Exposure Intelligence</a>
+      <div class="container d-flex justify-content-between align-items-center">
+        <a class="navbar-brand text-light" href="{% url 'breaches:dashboard' %}">
+          ShadowScan: Cyber Exposure Intelligence
+        </a>
+
+        <div class="d-flex align-items-center gap-3">
+          {% if user.is_authenticated %}
+          <form method="post" action="{% url 'logout' %}" class="m-0">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-outline-light btn-sm">
+              Logout
+            </button>
+          </form>
+          {% endif %}
+        </div>
       </div>
     </nav>
 
@@ -36,7 +51,10 @@
       {% block content %}{% endblock %}
     </main>
 
-    <script src="{% static 'security_ticker/js/ticker.js' %}"></script>
+    {# Only load ticker JS when we actually show the ticker #}
+    {% if user.is_authenticated %}
+      <script src="{% static 'security_ticker/js/ticker.js' %}"></script>
+    {% endif %}
 
     <!-- Bootstrap JS bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>

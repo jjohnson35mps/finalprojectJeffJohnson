@@ -2,16 +2,7 @@
 # INF601 - Advanced Programming in Python
 # Jeff Johnson
 # Final Project
-"""Django's command-line utility for administrative tasks."""
-#!/usr/bin/env python
-"""
-manage.py — Django's command-line utility for administrative tasks.
 
-Enhancements:
-- Loads environment variables from a .env file before Django boots.
-- Looks for .env in the REPO ROOT (preferred) and falls back to src/.env.
-- Fails gracefully if python-dotenv is not installed (won't block Django).
-"""
 import os
 import sys
 from pathlib import Path  # needed for cross-platform path handling

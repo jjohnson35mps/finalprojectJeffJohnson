@@ -1,14 +1,6 @@
 # INF601 - Advanced Programming in Python
 # Jeff Johnson
 # Final Project
-# src/tests/test_modularity_dashboard.py
-# ------------------------------------------------------------
-# Jeff Johnson — INF 601 Advanced Python — Final Project
-# Purpose: Assert that the "dashboard" app is modular using the same criteria:
-# - AppConfig/migrations present
-# - Namespaced templates/static
-# - No hard project imports
-# - Templates are loadable via loader
 
 import re
 from pathlib import Path

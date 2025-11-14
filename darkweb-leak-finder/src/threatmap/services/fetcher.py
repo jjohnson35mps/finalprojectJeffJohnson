@@ -1,14 +1,6 @@
 # INF601 - Advanced Programming in Python
 # Jeff Johnson
 # Final Project
-# src/threatmap/services/fetcher.py
-"""
-Fetcher: thin layer between views and providers.
-- Reads config (provider, ttl, limit)
-- Accepts an optional `source` (e.g., 'layer7_origin', 'layer7_target', 'layer3_origin', 'layer3_target')
-- Caches results PER (provider, source, limit) to avoid cross-pollution
-- Delegates the actual retrieval to the selected provider
-"""
 
 from __future__ import annotations
 

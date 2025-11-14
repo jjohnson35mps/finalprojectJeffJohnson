@@ -1,14 +1,6 @@
 # INF601 - Advanced Programming in Python
 # Jeff Johnson
 # Final Project
-# src/tests/test_modularity_breaches.py
-# ------------------------------------------------------------
-# Jeff Johnson — INF 601 Advanced Python — Final Project
-# Purpose: Assert that the "breaches" app is modular:
-# - Has AppConfig and migrations
-# - Namespaced templates/static paths
-# - No hard imports from the project package (DarkWebLeakFinder)
-# - Templates renderable via the loader (namespacing is correct)
 
 import re
 from pathlib import Path

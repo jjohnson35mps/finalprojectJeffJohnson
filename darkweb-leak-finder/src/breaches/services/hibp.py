@@ -1,17 +1,14 @@
 # INF601 - Advanced Programming in Python
 # Jeff Johnson
 # Final Project
-# src/breaches/services/hibp.py
-# Robust HIBP client with logging and last-call metadata.
-from __future__ import annotations
 
+from __future__ import annotations
 import os
 import re
 import time
 import logging
 from typing import Any, List, Optional
 from urllib.parse import quote
-
 import requests
 
 logger = logging.getLogger("breaches")
