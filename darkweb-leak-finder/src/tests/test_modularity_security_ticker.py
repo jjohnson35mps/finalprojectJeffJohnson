@@ -1,14 +1,6 @@
 # INF601 - Advanced Programming in Python
 # Jeff Johnson
 # Final Project
-# src/tests/test_modularity_security_ticker.py
-# ------------------------------------------------------------
-# Jeff Johnson — INF 601 Advanced Python — Final Project
-# Purpose: Assert that the "security_ticker" app is modular:
-# - Has AppConfig, migrations, urls
-# - Namespaced templates and static folders
-# - No hard project-specific imports
-# - (Optional) Template files resolve via loader
 
 import re
 from pathlib import Path

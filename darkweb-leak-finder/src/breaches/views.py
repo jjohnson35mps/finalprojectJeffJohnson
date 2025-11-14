@@ -4,37 +4,28 @@
 # src/breaches/views.py
 
 from __future__ import annotations
-
 import logging
 from typing import Any, Dict
-
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
-
 from .models import BreachHit, EmailIdentity, ShodanFinding
 from .services.hibp import HibpClient, HibpAuthError, HibpRateLimitError
 from .services.shodan_client import fetch_host, ShodanError
-
 from datetime import datetime
+from django.views.decorators.http import require_POST
 
 logger = logging.getLogger("breaches")
 
-# -------- Dashboard --------
+@login_required(login_url='login')
 def dashboard(request):
-    """
-    Render the main dashboard with identities and recent Shodan scans.
-    Template: breaches/main_db.html
-    """
     identities = EmailIdentity.objects.order_by("address")
     scans = ShodanFinding.objects.order_by("-last_seen")[:12]
     return render(request, "breaches/main_db.html", {"identities": identities, "scans": scans})
 
-# -------- Add Identity --------
+@login_required(login_url='login')
 def add_identity(request):
-    """
-    GET -> show form; POST -> create/get EmailIdentity, then go to dashboard.
-    """
     if request.method == "POST":
         email = (request.POST.get("email") or "").strip()
         if not email:
@@ -47,7 +38,7 @@ def add_identity(request):
 
     return render(request, "breaches/add_identity.html")
 
-# -------- HIBP util --------
+@login_required(login_url='login')
 def _date_or_none(value):
     if not value:
         return None
@@ -57,12 +48,11 @@ def _date_or_none(value):
         logger.debug(f"[SCAN] invalid date format received: {value!r}")
         return None
 
+@login_required(login_url='login')
 def _none_if_blank(v):
     return None if (v is None or (isinstance(v, str) and v.strip() == "")) else v
 
-# -------- Scan one identity (HIBP) --------
-from django.views.decorators.http import require_POST
-
+@login_required(login_url='login')
 def _safe_date(v):
     """Return 'YYYY-MM-DD' or None (never empty string)."""
     if not v:
@@ -75,6 +65,7 @@ def _safe_date(v):
     # very light validation
     return s if len(s) == 10 and s[4] == "-" and s[7] == "-" else None
 
+@login_required(login_url='login')
 @require_POST
 def scan_identity(request, pk: int):
     identity = get_object_or_404(EmailIdentity, pk=pk)
@@ -165,7 +156,7 @@ def scan_identity(request, pk: int):
 
     return redirect("breaches:identity_detail", pk=identity.pk)
 
-# -------- Scan target (Shodan) --------
+@login_required(login_url='login')
 def scan_target(request):
     if request.method != "POST":
         messages.error(request, "Invalid request method.")
@@ -221,6 +212,7 @@ def scan_target(request):
 
     return redirect("breaches:dashboard")
 
+@login_required(login_url='login')
 def identity_detail(request, pk: int):
     identity = get_object_or_404(EmailIdentity, pk=pk)
     hits = (
@@ -237,6 +229,7 @@ def identity_detail(request, pk: int):
         "hits": hits,             # <- expose hits
     })
 
+@login_required(login_url='login')
 @require_POST
 def delete_identity(request, pk: int):
     identity = get_object_or_404(EmailIdentity, pk=pk)
@@ -245,6 +238,7 @@ def delete_identity(request, pk: int):
     messages.success(request, f"Removed identity: {addr}")
     return redirect("breaches:dashboard")
 
+@login_required(login_url='login')
 @require_POST
 def delete_scan(request, pk: int):
     scan = get_object_or_404(ShodanFinding, pk=pk)

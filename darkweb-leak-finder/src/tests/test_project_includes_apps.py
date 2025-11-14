@@ -1,9 +1,6 @@
 # INF601 - Advanced Programming in Python
 # Jeff Johnson
 # Final Project
-# src/tests/test_project_includes_apps.py
-# ------------------------------------------------------------
-# Verifies the project-level URLConf includes each app’s urls module.
 
 from __future__ import annotations
 from typing import Iterable

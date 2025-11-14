@@ -1,20 +1,21 @@
 # INF601 - Advanced Programming in Python
 # Jeff Johnson
 # Final Project
-# src/threatmap/views.py
-
+from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from .services.fetcher import get_points
 from .conf import conf_get
 import random, json
 from django.conf import settings
 
+@login_required(login_url='login')
 def heat_points(request):
     return JsonResponse({
         "points": get_points(),
         "autoRefreshMs": conf_get("AUTO_REFRESH_MS"),
     })
 
+@login_required(login_url='login')
 def attack_points(request):
     """Return simulated or live attack points for heat map"""
     # Example static or fetched data
@@ -27,6 +28,7 @@ def attack_points(request):
         })
     return JsonResponse(points, safe=False)
 
+@login_required(login_url='login')
 def threat_points(request):
     source = request.GET.get("source")  # e.g., layer7_origin/layer7_target/...
     points = get_points(source=source)

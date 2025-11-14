@@ -1,7 +1,6 @@
 # INF601 - Advanced Programming in Python
 # Jeff Johnson
 # Final Project
-# breaches/templatetags/breach_extras.py
 
 from django import template
 import json
