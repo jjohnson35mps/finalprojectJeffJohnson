@@ -29,25 +29,58 @@
 
         <div class="d-flex align-items-center gap-3">
           {% if user.is_authenticated %}
-          <form method="post" action="{% url 'logout' %}" class="m-0">
-            {% csrf_token %}
-            <button type="submit" class="btn btn-outline-light btn-sm">
-              Logout
-            </button>
-          </form>
+            {# Admin button – goes to Django admin home #}
+            <a href="{% url 'admin:index' %}" class="btn btn-outline-info btn-sm">
+              Admin
+            </a>
+
+            <form method="post" action="{% url 'logout' %}" class="m-0">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-outline-light btn-sm">
+                Logout
+              </button>
+            </form>
+          {% else %}
+            <a href="{% url 'login' %}" class="btn btn-outline-light btn-sm">
+              Login
+            </a>
+            <a href="{% url 'admin:index' %}" class="btn btn-outline-info btn-sm">
+              Admin
+            </a>
           {% endif %}
         </div>
       </div>
     </nav>
 
+
+    {# Toast-style Django messages #}
+    {% if messages %}
+      <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 2000;">
+        {% for m in messages %}
+          <div
+            class="toast text-bg-{% if 'error' in m.tags %}danger{% elif 'warning' in m.tags %}warning{% elif 'success' in m.tags %}success{% else %}secondary{% endif %} border-0 shadow"
+            role="alert"
+            aria-live="assertive"
+            aria-atomic="true"
+            data-bs-delay="4000"
+          >
+            <div class="d-flex">
+              <div class="toast-body">
+                {{ m }}
+              </div>
+              <button
+                type="button"
+                class="btn-close btn-close-white me-2 m-auto"
+                data-bs-dismiss="toast"
+                aria-label="Close"
+              ></button>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
     <main class="container py-4">
-      {% if messages %}
-        <div class="mb-3">
-          {% for m in messages %}
-            <div class="alert alert-{{ m.tags|default:'secondary' }} mb-2">{{ m }}</div>
-          {% endfor %}
-        </div>
-      {% endif %}
       {% block content %}{% endblock %}
     </main>
 
@@ -58,5 +91,15 @@
 
     <!-- Bootstrap JS bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+      window.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.toast').forEach(el => {
+          const toast = new bootstrap.Toast(el); // uses data-bs-delay for autohide
+          toast.show();
+        });
+      });
+    </script>
+
   </body>
 </html>

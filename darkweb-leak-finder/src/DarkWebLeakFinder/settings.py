@@ -28,7 +28,7 @@ SECRET_KEY = 'django-insecure-o3-g@82m@r2x^g+a&@a62^0nzzh$etkwvmdd!ofta=f8yt(ldi
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
 
 # src/DarkWebLeakFinder/settings.py  (add or replace LOGGING)
 # Logs to the dev server console so you can see HIBP calls/results.
@@ -140,7 +140,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
@@ -158,6 +158,6 @@ THREATMAP = {
 }
 
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
-SESSION_COOKIE_AGE = 10
+SESSION_COOKIE_AGE = 28800
 LOGIN_REDIRECT_URL = "/"              # or "/breaches/" if you prefer
 LOGOUT_REDIRECT_URL = "/accounts/login/"

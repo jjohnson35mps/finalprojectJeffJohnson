@@ -122,7 +122,7 @@
 
                     {# Remove this saved scan #}
                     <form method="post" action="{% url 'breaches:delete_scan' pk=s.pk %}" class="m-0"
-                          onsubmit="return confirm('Remove saved Shodan scan for {{ s.ip }}?');">
+                          onsubmit="return confirm('Remove saved scan for {{ s.ip }}?');">
                       {% csrf_token %}
                       <button class="btn btn-sm btn-outline-danger" type="submit">Remove</button>
                     </form>

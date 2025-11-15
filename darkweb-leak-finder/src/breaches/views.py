@@ -36,9 +36,8 @@ def add_identity(request):
         messages.success(request, f"{'Added' if created else 'Already exists'}: {obj.address}")
         return redirect("breaches:dashboard")
 
-    return render(request, "breaches/add_identity.html")
+    return render(request, "breaches/identity_detail.html")
 
-@login_required(login_url='login')
 def _date_or_none(value):
     if not value:
         return None
@@ -48,11 +47,9 @@ def _date_or_none(value):
         logger.debug(f"[SCAN] invalid date format received: {value!r}")
         return None
 
-@login_required(login_url='login')
 def _none_if_blank(v):
     return None if (v is None or (isinstance(v, str) and v.strip() == "")) else v
 
-@login_required(login_url='login')
 def _safe_date(v):
     """Return 'YYYY-MM-DD' or None (never empty string)."""
     if not v:
@@ -140,8 +137,7 @@ def scan_identity(request, pk: int):
 
         messages.success(
             request,
-            f"Scan complete for {identity.address}. API status={client.last_status}, "
-            f"returned={client.last_items}, new={created_count}, updated={updated_count}."
+            f"Scan complete for {identity.address}."
         )
 
     except HibpAuthError as ex:
@@ -170,12 +166,12 @@ def scan_target(request):
     try:
         data = fetch_host(target)
         if not data:
-            messages.info(request, f"No Shodan data found for {target}.")
+            messages.info(request, f"No data found for {target}.")
             return redirect("breaches:dashboard")
 
         ip = data.get("ip_str") or data.get("ip")
         if not ip:
-            messages.error(request, "Shodan returned no IP for this host.")
+            messages.error(request, "No IP for this host.")
             return redirect("breaches:dashboard")
 
         hostnames = data.get("hostnames") or []
@@ -201,13 +197,13 @@ def scan_target(request):
             },
         )
 
-        messages.success(request, f"Shodan scan saved for {ip}.")
+        messages.success(request, f"Scan saved for {ip}.")
 
     except ShodanError as e:
         logger.warning("Shodan scan failed for %s: %s", target, e)
-        messages.error(request, f"Shodan scan failed: {e}")
+        messages.error(request, f"Scan failed: {e}")
     except Exception as e:
-        logger.exception("Unexpected error running shodan scan for %s", target)
+        logger.exception("Unexpected error running scan for %s", target)
         messages.error(request, f"Unexpected error: {e}")
 
     return redirect("breaches:dashboard")
@@ -244,5 +240,5 @@ def delete_scan(request, pk: int):
     scan = get_object_or_404(ShodanFinding, pk=pk)
     ip = scan.ip
     scan.delete()
-    messages.success(request, f"Removed Shodan scan for {ip}.")
+    messages.success(request, f"Removed scan for {ip}.")
     return redirect("breaches:dashboard")
