@@ -2,76 +2,152 @@
 {% block title %}Register - ShadowScan{% endblock %}
 
 {% block content %}
-<div class="auth-wrapper d-flex justify-content-center align-items-center">
-  <div class="card bg-dark border-0 shadow-sm auth-card">
-    <div class="card-body p-4">
-      <h1 class="h5 mb-4 text-center">Create an account</h1>
 
-      {% if form.non_field_errors %}
-        <div class="alert alert-danger">
-          {{ form.non_field_errors }}
-        </div>
-      {% endif %}
+  {% comment %}
+    registration/register.html
+    --------------------------
+    User registration form for ShadowScan.
 
-      <form method="post" novalidate>
-        {% csrf_token %}
+    OWASP Top 10 touchpoints:
+      - A01/A07 (Broken Access Control / Identification & Authentication):
+          * Actual account creation + auth handled by Django's UserCreationForm
+            and auth system.
+      - A02 (Security Misconfiguration):
+          * CSRF token is included on the POST form.
+          * This template assumes HTTPS and secure cookie settings are enforced
+            at the deployment level.
+      - A03/A05/A06 (Injection / XSS / Insecure design):
+          * Error messages are rendered with |striptags, avoiding HTML injection.
+          * No user-controlled data is marked |safe.
+      - A04 (Insecure Design):
+          * Password fields use autocomplete="new-password" and never echo any
+            password values back to the client.
+  {% endcomment %}
 
-        <!-- Username -->
-        <div class="mb-3">
-          <label class="form-label" for="{{ form.username.id_for_label }}">Username</label>
-          <input
+  {% comment %}
+    Outer wrapper:
+      - Centers the registration card within the viewport using Flexbox.
+  {% endcomment %}
+  <div class="auth-wrapper d-flex justify-content-center align-items-center">
+    <div class="card bg-dark border-0 shadow-sm auth-card">
+      <div class="card-body p-4">
+        <h1 class="h5 mb-4 text-center">Create an account</h1>
+
+        {% comment %}
+          Non-field errors:
+            - Used for general validation failures not tied to a single field.
+            - striptags prevents any HTML that might sneak into error messages
+              from rendering (XSS mitigation).
+        {% endcomment %}
+        {% if form.non_field_errors %}
+          <div class="alert alert-danger">
+            {{ form.non_field_errors|striptags }}
+          </div>
+        {% endif %}
+
+        {% comment %}
+          Registration form:
+            - Uses POST with CSRF (A02).
+            - novalidate keeps server-side validation as the source of truth,
+              while simple HTML attributes (required, autocomplete) improve UX.
+        {% endcomment %}
+        <form method="post" novalidate>
+          {% csrf_token %}
+
+          {% comment %}
+            Username field:
+              - autocomplete="username" supports browser password managers.
+              - Value is repopulated after validation errors for better UX.
+          {% endcomment %}
+          <div class="mb-3">
+            <label class="form-label" for="{{ form.username.id_for_label }}">
+              Username
+            </label>
+            <input
               type="text"
               name="{{ form.username.html_name }}"
               id="{{ form.username.id_for_label }}"
               class="form-control"
               value="{{ form.username.value|default:'' }}"
               autocomplete="username"
-              required>
-          {% if form.username.errors %}
-            <div class="text-danger small mt-1">{{ form.username.errors|striptags }}</div>
-          {% endif %}
-        </div>
+              required
+            >
+            {% if form.username.errors %}
+              <div class="text-danger small mt-1">
+                {{ form.username.errors|striptags }}
+              </div>
+            {% endif %}
+          </div>
 
-        <!-- Password -->
-        <div class="mb-3">
-          <label class="form-label" for="{{ form.password1.id_for_label }}">Password</label>
-          <input
+          {% comment %}
+            Password field:
+              - Uses autocomplete="new-password" for safer password manager behavior.
+              - Never pre-fills a value; avoids echoing secrets.
+          {% endcomment %}
+          <div class="mb-3">
+            <label class="form-label" for="{{ form.password1.id_for_label }}">
+              Password
+            </label>
+            <input
               type="password"
               name="{{ form.password1.html_name }}"
               id="{{ form.password1.id_for_label }}"
               class="form-control"
               autocomplete="new-password"
-              required>
-          {% if form.password1.errors %}
-            <div class="text-danger small mt-1">{{ form.password1.errors|striptags }}</div>
-          {% endif %}
-        </div>
+              required
+            >
+            {% if form.password1.errors %}
+              <div class="text-danger small mt-1">
+                {{ form.password1.errors|striptags }}
+              </div>
+            {% endif %}
+          </div>
 
-        <!-- Confirm password -->
-        <div class="mb-3">
-          <label class="form-label" for="{{ form.password2.id_for_label }}">Confirm password</label>
-          <input
+          {% comment %}
+            Confirm password field:
+              - Also uses autocomplete="new-password".
+              - Server-side validation ensures both passwords match and meet policy.
+          {% endcomment %}
+          <div class="mb-3">
+            <label class="form-label" for="{{ form.password2.id_for_label }}">
+              Confirm password
+            </label>
+            <input
               type="password"
               name="{{ form.password2.html_name }}"
               id="{{ form.password2.id_for_label }}"
               class="form-control"
               autocomplete="new-password"
-              required>
-          {% if form.password2.errors %}
-            <div class="text-danger small mt-1">{{ form.password2.errors|striptags }}</div>
-          {% endif %}
-        </div>
+              required
+            >
+            {% if form.password2.errors %}
+              <div class="text-danger small mt-1">
+                {{ form.password2.errors|striptags }}
+              </div>
+            {% endif %}
+          </div>
 
-        <button type="submit" class="btn btn-primary w-100 mt-2">
-          Register
-        </button>
-      </form>
+          {% comment %}
+            Primary submit button:
+              - Submits registration request to the same endpoint.
+          {% endcomment %}
+          <button type="submit" class="btn btn-primary w-100 mt-2">
+            Register
+          </button>
+        </form>
 
-      <p class="text-center mt-3 mb-0 small">
-        Already have an account?
-        <a href="{% url 'login' %}" class="link-primary">Sign in</a>
-      </p>
+        {% comment %}
+          Login link:
+            - Navigation back to the login page for users that already have an account.
+        {% endcomment %}
+        <p class="text-center mt-3 mb-0 small">
+          Already have an account?
+          <a href="{% url 'login' %}" class="link-primary">
+            Sign in
+          </a>
+        </p>
+      </div>
     </div>
   </div>
-</div>
+
 {% endblock %}

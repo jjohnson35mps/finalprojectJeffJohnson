@@ -1,32 +1,41 @@
-/* Dark Web Leak Finder — Dark Theme (rewritten) */
-/* ------------------------------------------------------------------ */
-/* Design goals:
-   - True dark surfaces, high-contrast headings, softer body copy
-   - Uniform “dark-grey” buttons with tasteful motion + focus rings
-   - Consistent components (cards, tables, alerts, forms, badges)
-   - Minimal !important; only where Bootstrap specificity demands it
+/* INF601 - Advanced Programming in Python
+   Jeff Johnson
+   Final Project
+
+   Dark Web Leak Finder — Dark Theme
+   ------------------------------------------------------------------
+   Security / OWASP notes (CSS-specific):
+     - A03/A05/A06 (Injection / XSS / Insecure design):
+         * This file contains only static styles; no dynamic data is injected.
+         * Do NOT use CSS to hide server-side validation or error messages
+           (e.g., alerts) — users must be able to see security-relevant UI.
+     - A05 (Security Misconfiguration):
+         * Avoid adding styles that remove outlines/focus indicators; we add
+           a custom focus ring instead of suppressing focus entirely.
+     - A06 (Sensitive Data Exposure):
+         * No secrets or user data should ever appear in CSS.
 */
 
 /* ------------------------------ */
-/* Tokens                         */
+/* Tokens / Design variables      */
 /* ------------------------------ */
 :root {
   /* Surfaces & text */
-  --dw-page:   #1a1f24;   /* page */
-  --dw-panel:  #0f141a;   /* cards/nav/modals */
+  --dw-page:   #1a1f24;   /* overall page canvas */
+  --dw-panel:  #0f141a;   /* cards/nav/modals/panels */
   --dw-border: #1f2a33;
   --dw-text:   #ffffff;   /* headings/labels */
-  --dw-detail: #c7d0da;   /* paragraphs/hints */
+  --dw-detail: #c7d0da;   /* body copy, hints */
   --dw-link:   #93c5fd;
   --dw-link-h: #bfdbfe;
 
   /* Buttons */
-  --dw-button:       #141a21;   /* base */
-  --dw-button-hover: #1b232b;   /* hover/focus */
+  --dw-button:       #141a21;   /* base dark-grey button */
+  --dw-button-hover: #1b232b;   /* hover/focus state */
   --dw-button-edge:  #2b3640;
 
   /* Accents (focus ring, subtle glows) */
-  --dw-focus:        56,189,248; /* rgb for shadow */
+  --dw-focus:        56,189,248; /* rgb for box-shadow focus ring */
 
   /* Bootstrap body tokens */
   --bs-body-bg: var(--dw-page);
@@ -34,17 +43,23 @@
 }
 
 /* ------------------------------ */
-/* Canvas                         */
+/* Global canvas / layout         */
 /* ------------------------------ */
-html, body {
+html,
+body {
   background-color: var(--dw-page);
   color: var(--dw-text);
 }
 
-/* Kill stray light backgrounds */
-.bg-body, .bg-light, .bg-white,
-.container, .container-fluid,
-main, .page, .content {
+/* Ensure core containers don’t reintroduce light backgrounds */
+.bg-body,
+.bg-light,
+.bg-white,
+.container,
+.container-fluid,
+main,
+.page,
+.content {
   background-color: var(--dw-page) !important;
   color: var(--dw-text) !important;
 }
@@ -52,39 +67,76 @@ main, .page, .content {
 /* ------------------------------ */
 /* Typography & links             */
 /* ------------------------------ */
-h1, h2, h3, h4, h5, h6, strong { color: var(--dw-text); }
-p, li, small, .text-muted, .text-body-secondary { color: var(--dw-detail) !important; }
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+strong {
+  color: var(--dw-text);
+}
 
-a { color: var(--dw-link); text-decoration: none; }
-a:hover { color: var(--dw-link-h); text-decoration: underline; }
+p,
+li,
+small,
+.text-muted,
+.text-body-secondary {
+  color: var(--dw-detail) !important;
+}
+
+/* Accessible, high-contrast link colors */
+a {
+  color: var(--dw-link);
+  text-decoration: none;
+}
+a:hover {
+  color: var(--dw-link-h);
+  text-decoration: underline;
+}
 
 /* ------------------------------ */
 /* Navbar                         */
 /* ------------------------------ */
-.navbar, .navbar-dark, .navbar .container {
+.navbar,
+.navbar-dark,
+.navbar .container {
   background-color: var(--dw-panel) !important;
   color: var(--dw-text) !important;
   border-bottom: 1px solid var(--dw-border);
 }
-.navbar a, .navbar-brand, .nav-link { color: var(--dw-text) !important; }
-.navbar .nav-link:hover { color: var(--dw-link-h) !important; }
+
+.navbar a,
+.navbar-brand,
+.nav-link {
+  color: var(--dw-text) !important;
+}
+
+.navbar .nav-link:hover {
+  color: var(--dw-link-h) !important;
+}
 
 /* ------------------------------ */
 /* Cards / Panels / Lists         */
 /* ------------------------------ */
-.card, .modal-content, .list-group-item,
-.accordion-item, .accordion-body {
+.card,
+.modal-content,
+.list-group-item,
+.accordion-item,
+.accordion-body {
   background-color: var(--dw-panel);
   color: var(--dw-detail);
   border: 1px solid var(--dw-border);
 }
-.card-header, .card-footer {
+
+.card-header,
+.card-footer {
   background-color: #0b1117;
   border-color: var(--dw-border);
   color: var(--dw-text);
 }
 
-/* Accordion headers */
+/* Accordion headers: keep dark/flat, no bright focus halo */
 .accordion-button,
 .accordion-button:not(.collapsed) {
   background-color: var(--dw-panel);
@@ -92,6 +144,8 @@ a:hover { color: var(--dw-link-h); text-decoration: underline; }
   border-bottom: 1px solid var(--dw-border);
   box-shadow: none;
 }
+
+/* Ensure muted text inside accordions is still legible on dark bg */
 .accordion-button .text-muted,
 .accordion-button .text-body-secondary,
 .accordion-button small,
@@ -105,17 +159,26 @@ a:hover { color: var(--dw-link-h); text-decoration: underline; }
 /* ------------------------------ */
 /* Forms                          */
 /* ------------------------------ */
-.form-control, .form-select, .form-check-input {
+.form-control,
+.form-select,
+.form-check-input {
   background-color: #10161c;
   color: var(--dw-text);
   border: 1px solid var(--dw-border);
 }
-.form-control::placeholder { color: #8b98a5; }
-.form-control:focus, .form-select:focus, .form-check-input:focus {
+
+.form-control::placeholder {
+  color: #8b98a5;
+}
+
+.form-control:focus,
+.form-select:focus,
+.form-check-input:focus {
   background-color: #10181f;
   border-color: #2a3947;
-  box-shadow: 0 0 0 .2rem rgba(var(--dw-focus), .18);
+  box-shadow: 0 0 0 0.2rem rgba(var(--dw-focus), 0.18);
 }
+
 .input-group-text {
   background-color: #0b1117;
   color: var(--dw-detail);
@@ -123,49 +186,103 @@ a:hover { color: var(--dw-link-h); text-decoration: underline; }
 }
 
 /* ------------------------------ */
-/* Buttons                        */
+/* Buttons (primary control)      */
 /* ------------------------------ */
 .btn {
   background-color: var(--dw-button);
   color: var(--dw-detail);
   border: 1px solid var(--dw-button-edge);
-  border-radius: .75rem;
+  border-radius: 0.75rem;
   box-shadow: none;
-  transition: transform .06s ease, background-color .15s ease, border-color .15s ease, box-shadow .15s ease;
+  transition:
+    transform 0.06s ease,
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
 }
-.btn:hover, .btn:focus {
+
+.btn:hover,
+.btn:focus {
   background-color: var(--dw-button-hover);
   border-color: var(--dw-border);
   transform: translateY(-1px);
 }
-.btn:active { transform: translateY(0); }
-.btn:focus-visible { box-shadow: 0 0 0 .2rem rgba(var(--dw-focus), .18); }
 
-.btn:disabled, .btn.disabled {
+/* Click/active state: remove lift */
+.btn:active {
+  transform: translateY(0);
+}
+
+/* Provide a visible focus ring for keyboard users */
+.btn:focus-visible {
+  box-shadow: 0 0 0 0.2rem rgba(var(--dw-focus), 0.18);
+}
+
+/* Disabled state: muted but still legible */
+.btn:disabled,
+.btn.disabled {
   background-color: var(--dw-button);
   color: var(--dw-detail);
   border-color: var(--dw-button-edge);
-  opacity: .6;
+  opacity: 0.6;
 }
 
-/* Link-style button that still fits the theme */
+/* ------------------------------ */
+/* Link-style button variant      */
+/* ------------------------------ */
 .btn-link {
   background-color: transparent;
   color: var(--dw-link);
   border-color: transparent;
-  padding-left: .25rem; padding-right: .25rem;
+  padding-left: 0.25rem;
+  padding-right: 0.25rem;
 }
-.btn-link:hover { color: var(--dw-link-h); text-decoration: underline; }
 
-/* Accent variants (optional, keep subdued on dark) */
-.btn-primary   { background-color: #0ea5e9; border-color: #0ea5e9; color: #0b1220; }
-.btn-primary:hover, .btn-primary:focus { background-color: #38bdf8; border-color: #38bdf8; color: #0b1220; }
+.btn-link:hover {
+  color: var(--dw-link-h);
+  text-decoration: underline;
+}
 
-.btn-secondary { background-color: #475569; border-color: #475569; color: #e2e8f0; }
-.btn-secondary:hover, .btn-secondary:focus { background-color: #64748b; border-color: #64748b; }
+/* ------------------------------ */
+/* Accent button variants         */
+/* (use sparingly on dark themes) */
+/* ------------------------------ */
+.btn-primary {
+  background-color: #0ea5e9;
+  border-color: #0ea5e9;
+  color: #0b1220;
+}
 
-.btn-danger    { background-color: #ef4444; border-color: #ef4444; color: #0b1220; }
-.btn-danger:hover, .btn-danger:focus { background-color: #f87171; border-color: #f87171; }
+.btn-primary:hover,
+.btn-primary:focus {
+  background-color: #38bdf8;
+  border-color: #38bdf8;
+  color: #0b1220;
+}
+
+.btn-secondary {
+  background-color: #475569;
+  border-color: #475569;
+  color: #e2e8f0;
+}
+
+.btn-secondary:hover,
+.btn-secondary:focus {
+  background-color: #64748b;
+  border-color: #64748b;
+}
+
+.btn-danger {
+  background-color: #ef4444;
+  border-color: #ef4444;
+  color: #0b1220;
+}
+
+.btn-danger:hover,
+.btn-danger:focus {
+  background-color: #f87171;
+  border-color: #f87171;
+}
 
 /* Subtle/ghost button for tertiary actions */
 .btn-ghost {
@@ -173,7 +290,9 @@ a:hover { color: var(--dw-link-h); text-decoration: underline; }
   color: var(--dw-detail);
   border: 1px solid var(--dw-border);
 }
-.btn-ghost:hover, .btn-ghost:focus {
+
+.btn-ghost:hover,
+.btn-ghost:focus {
   background-color: #12171d;
   color: var(--dw-text);
 }
@@ -186,32 +305,61 @@ a:hover { color: var(--dw-link-h); text-decoration: underline; }
   --bs-table-color: var(--dw-detail);
   --bs-table-border-color: var(--dw-border);
 }
+
 .table thead th {
   color: var(--dw-text);
   border-bottom: 1px solid var(--dw-border);
   font-weight: 600;
 }
+
 .table-hover tbody tr:hover {
   color: var(--dw-text);
   background-color: #121821;
 }
-.table-sm td, .table-sm th { padding-top: .5rem; padding-bottom: .5rem; }
+
+.table-sm td,
+.table-sm th {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
 
 /* ------------------------------ */
-/* Alerts / Toasts / Popovers     */
+/* Alerts / Toasts / Overlays     */
 /* ------------------------------ */
 .alert {
   background-color: var(--dw-panel);
   color: var(--dw-detail);
   border: 1px solid var(--dw-border);
-  border-radius: .75rem;
+  border-radius: 0.75rem;
 }
-.alert-success { border-color: #1f3f21; background-color: #0e2011; color: #86efac; }
-.alert-info    { border-color: #1f3347; background-color: #0a1b2b; color: #93c5fd; }
-.alert-warning { border-color: #53461a; background-color: #2a2010; color: #fde68a; }
-.alert-danger  { border-color: #512022; background-color: #2a0f12; color: #fca5a5; }
 
-.dropdown-menu, .offcanvas, .toast, .popover, .tooltip-inner {
+/* Keep variants visible and distinct (important for security messages) */
+.alert-success {
+  border-color: #1f3f21;
+  background-color: #0e2011;
+  color: #86efac;
+}
+.alert-info {
+  border-color: #1f3347;
+  background-color: #0a1b2b;
+  color: #93c5fd;
+}
+.alert-warning {
+  border-color: #53461a;
+  background-color: #2a2010;
+  color: #fde68a;
+}
+.alert-danger {
+  border-color: #512022;
+  background-color: #2a0f12;
+  color: #fca5a5;
+}
+
+.dropdown-menu,
+.offcanvas,
+.toast,
+.popover,
+.tooltip-inner {
   background-color: var(--dw-panel);
   color: var(--dw-detail);
   border: 1px solid var(--dw-border);
@@ -224,61 +372,111 @@ a:hover { color: var(--dw-link-h); text-decoration: underline; }
 .badge.rounded-pill,
 .badge[class*="text-bg-"],
 .badge[class*="bg-"],
-.tag, .label, .pill, .chip {
+.tag,
+.label,
+.pill,
+.chip {
   background-color: var(--dw-page);
   color: var(--dw-detail);
   border: 1px solid var(--dw-button-edge);
   box-shadow: none;
 }
-.badge.rounded-pill, .badge-pill, .tag, .chip {
+
+.badge.rounded-pill,
+.badge-pill,
+.tag,
+.chip {
   border-radius: 9999px;
-  padding: .35rem .6rem;
+  padding: 0.35rem 0.6rem;
   font-weight: 600;
-  font-size: .8rem;
+  font-size: 0.8rem;
 }
-.badge:hover, .tag:hover, .chip:hover {
+
+.badge:hover,
+.tag:hover,
+.chip:hover {
   background-color: var(--dw-button-hover);
   color: var(--dw-detail);
 }
 
-/* Accent badge options (use where helpful) */
-.badge-accent { background-color: #0a1b2b; color: #93c5fd; border-color: #1f3347; }
-.badge-high   { background-color: #2a0f12; color: #fca5a5; border-color: #512022; }
-.badge-med    { background-color: #2a2010; color: #fde68a; border-color: #53461a; }
-.badge-low    { background-color: #102711; color: #86efac; border-color: #1f3f21; }
+/* Risk-level style variants for quick visual parsing */
+.badge-accent {
+  background-color: #0a1b2b;
+  color: #93c5fd;
+  border-color: #1f3347;
+}
+.badge-high {
+  background-color: #2a0f12;
+  color: #fca5a5;
+  border-color: #512022;
+}
+.badge-med {
+  background-color: #2a2010;
+  color: #fde68a;
+  border-color: #53461a;
+}
+.badge-low {
+  background-color: #102711;
+  color: #86efac;
+  border-color: #1f3f21;
+}
 
 /* ------------------------------ */
-/* Identity detail niceties       */
+/* Identity detail helpers        */
 /* ------------------------------ */
-.actions-row { display: flex; flex-wrap: wrap; gap: .5rem; }
+.actions-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
 
-.data-classes { display: flex; flex-wrap: wrap; gap: .35rem; }
+.data-classes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
 .data-classes .chip {
-  padding: .25rem .5rem;
+  padding: 0.25rem 0.5rem;
   border-radius: 999px;
   border: 1px solid var(--dw-border);
   background: #0f141a;
   color: var(--dw-detail);
-  font-size: .85rem;
+  font-size: 0.85rem;
 }
 
 /* ------------------------------ */
 /* Utilities                      */
 /* ------------------------------ */
-.muted { color: var(--dw-detail); }
-
-hr { border-color: var(--dw-border); opacity: 1; }
-
-::-webkit-scrollbar { width: 10px; height: 10px; }
-::-webkit-scrollbar-track { background: #0c1116; }
-::-webkit-scrollbar-thumb { background: #22303b; border-radius: 8px; }
-::-webkit-scrollbar-thumb:hover { background: #2c3c48; }
-
-/* Button chips for Data Classes */
-.btn-chip {
-  border-radius: 999px;
-  padding: .25rem .6rem;
-  cursor: default;
-  pointer-events: none; /* non-interactive look */
+.muted {
+  color: var(--dw-detail);
 }
 
+hr {
+  border-color: var(--dw-border);
+  opacity: 1;
+}
+
+/* Custom scrollbar styling for dark UI */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #0c1116;
+}
+::-webkit-scrollbar-thumb {
+  background: #22303b;
+  border-radius: 8px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #2c3c48;
+}
+
+/* Button-style chips for Data Classes (non-interactive) */
+.btn-chip {
+  border-radius: 999px;
+  padding: 0.25rem 0.6rem;
+  cursor: default;
+  pointer-events: none; /* ensures they are visually buttons, not clickable */
+}

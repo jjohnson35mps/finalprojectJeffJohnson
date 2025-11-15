@@ -1,10 +1,22 @@
 {% extends "core/base.html" %}
-{% block content %}
 {% load static %}
 
-<!-- =======================
-     NEW FULL-WIDTH SECTION
-     ======================= -->
+{% block content %}
+
+{% comment %}
+  ShadowScan main dashboard layout
+
+  OWASP Top 10 touchpoints:
+    - A01/A07 (Access control & auth): only authenticated users should reach this view; enforced in views.py.
+    - A02 (Security Misconfiguration): all POST forms include CSRF tokens; sensitive keys stay in settings/env.
+    - A03/A05 (Injection / XSS):
+        * No user input is rendered with |safe.
+        * Inline JS confirms escape dynamic values with escapejs.
+    - A06 (Insecure Design): clear separation of concerns (identity checks, scans, map).
+    - A09 (Logging & alerting): logging is handled in views/services, not in this template.
+{% endcomment %}
+
+{% comment %} Full-width summary bar at the top of the dashboard {% endcomment %}
 <section id="attack-summary" class="mb-4">
   <div class="attack-summary-bar d-flex justify-content-between align-items-center flex-wrap gap-2">
     <div class="d-flex flex-wrap align-items-center gap-2">
@@ -26,15 +38,20 @@
 </section>
 
 <div class="row g-4 align-items-start">
-  <!-- LEFT: cards -->
+  {% comment %} LEFT COLUMN: identities + Shodan-style scans {% endcomment %}
   <div class="col-12 col-lg-5 col-xl-4" id="left-col">
-    <!-- Email Data Breach Check -->
+
+    {% comment %} Email Data Breach Check card {% endcomment %}
     <section id="identities" class="mb-4">
       <div class="card p-3 shadow-sm">
         <h2 class="h5 mb-3">Email Data Breach Check</h2>
         <form method="post" action="{% url 'breaches:add' %}" class="d-flex gap-2 mb-3">
           {% csrf_token %}
-          <input name="email" type="email" class="form-control" placeholder="email@example.com" required>
+          <input name="email"
+                 type="email"
+                 class="form-control"
+                 placeholder="email@example.com"
+                 required>
           <button class="btn btn-primary">Add</button>
         </form>
 
@@ -42,12 +59,17 @@
           <ul class="list-group list-group-flush">
             {% for i in identities %}
               <li class="list-group-item bg-transparent d-flex justify-content-between align-items-center">
-                <a href="{% url 'breaches:identity_detail' i.pk %}" class="text-decoration-none">
+                <a href="{% url 'breaches:identity_detail' i.pk %}"
+                   class="text-decoration-none">
                   {{ i.address }}
                 </a>
 
                 <div class="d-flex gap-2">
-                  {# POST Scan with loading state #}
+                  {% comment %}
+                    POST Scan with loading state.
+                    - Uses inline JS to disable the button and show "Scanning…".
+                    - No dynamic data in this snippet → low injection risk.
+                  {% endcomment %}
                   <form method="post"
                         action="{% url 'breaches:scan_identity' pk=i.pk %}"
                         class="m-0"
@@ -56,11 +78,15 @@
                     <button type="submit" class="btn btn-sm btn-outline-light">Scan</button>
                   </form>
 
-                  {# POST Remove with confirm #}
+                  {% comment %}
+                    POST Remove with confirm.
+                    - Dynamic email address is escaped for JS context with escapejs
+                      to avoid breaking the quote-delimited string (OWASP A03/A05).
+                  {% endcomment %}
                   <form method="post"
                         action="{% url 'breaches:delete_identity' pk=i.pk %}"
                         class="m-0"
-                        onsubmit="return confirm('Remove {{ i.address }}? This will also delete its saved breach results.');">
+                        onsubmit="return confirm('Remove {{ i.address|escapejs }}? This will also delete its saved breach results.');">
                     {% csrf_token %}
                     <button type="submit" class="btn btn-sm btn-outline-danger">Remove</button>
                   </form>
@@ -74,7 +100,7 @@
       </div>
     </section>
 
-    <!-- Domain/IP Port Scan -->
+    {% comment %} Domain/IP Port Scan card (Shodan-style results) {% endcomment %}
     <section id="scan" class="mt-4">
       <div class="card p-3 shadow-sm">
         <div class="d-flex align-items-center justify-content-between mb-2">
@@ -84,7 +110,11 @@
 
         <form method="post" action="{% url 'breaches:scan_target' %}" class="d-flex gap-2">
           {% csrf_token %}
-          <input name="target" type="text" class="form-control" placeholder="example.com or 1.2.3.4" required>
+          <input name="target"
+                 type="text"
+                 class="form-control"
+                 placeholder="example.com or 1.2.3.4"
+                 required>
           <button class="btn btn-primary">Scan</button>
         </form>
 
@@ -112,17 +142,28 @@
                   </span>
 
                   <div class="d-flex gap-2">
-                    {# Quick rescan (pre-fills target with this IP) #}
-                    <form method="post" action="{% url 'breaches:scan_target' %}" class="m-0"
+                    {% comment %}
+                      Quick rescan:
+                      - Pre-fills target with this IP via hidden input.
+                      - Button gets disabled on submit to prevent double-clicks.
+                    {% endcomment %}
+                    <form method="post"
+                          action="{% url 'breaches:scan_target' %}"
+                          class="m-0"
                           onsubmit="const b=this.querySelector('button'); if(b){b.disabled=true; b.textContent='Scanning…';}">
                       {% csrf_token %}
                       <input type="hidden" name="target" value="{{ s.ip }}">
                       <button class="btn btn-sm btn-outline-light" type="submit">Rescan</button>
                     </form>
 
-                    {# Remove this saved scan #}
-                    <form method="post" action="{% url 'breaches:delete_scan' pk=s.pk %}" class="m-0"
-                          onsubmit="return confirm('Remove saved scan for {{ s.ip }}?');">
+                    {% comment %}
+                      Remove this saved scan.
+                      - s.ip is escaped for JS string safety (escapejs).
+                    {% endcomment %}
+                    <form method="post"
+                          action="{% url 'breaches:delete_scan' pk=s.pk %}"
+                          class="m-0"
+                          onsubmit="return confirm('Remove saved scan for {{ s.ip|escapejs }}?');">
                       {% csrf_token %}
                       <button class="btn btn-sm btn-outline-danger" type="submit">Remove</button>
                     </form>
@@ -136,14 +177,17 @@
     </section>
   </div>
 
-  {# RIGHT: heat map + sidebar #}
+  {% comment %} RIGHT COLUMN: Global attack heat map + sidebar {% endcomment %}
   <div class="col-12 col-lg-7 col-xl-8">
     <div class="card p-0 shadow-sm" style="min-height:60vh;">
       <div class="p-3 border-bottom d-flex justify-content-between align-items-center">
         <div class="d-flex align-items-center gap-2">
           <h2 class="h5 mb-0">Global Attack Heat Map</h2>
-          <!-- Source selector -->
-          <select id="tm-radar-source" class="form-select form-select-sm ms-2" style="width:auto;">
+
+          {% comment %} Source selector for different Cloudflare Radar feeds {% endcomment %}
+          <select id="tm-radar-source"
+                  class="form-select form-select-sm ms-2"
+                  style="width:auto;">
             <option value="layer7_origin" selected>Application Attack Point of Origin</option>
             <option value="layer7_target">Application Attack Target</option>
             <option value="layer3_origin">Network Attack Point of Origin</option>
@@ -154,12 +198,12 @@
       </div>
 
       <div class="row g-0">
-        <!-- MAP -->
+        {% comment %} MAP region {% endcomment %}
         <div class="col-12 col-xl-9">
           <div id="tm-world-map" class="tm-map"></div>
         </div>
 
-        <!-- SIDEBAR -->
+        {% comment %} SIDEBAR with attack snapshot and explanatory text {% endcomment %}
         <div class="col-12 col-xl-3 border-top border-xl-start border-secondary-subtle">
           <div class="p-3 tm-sidebar" id="tm-sidebar">
             <h3 class="h6 text-uppercase mb-3 text-muted">Attack Snapshot</h3>
@@ -170,19 +214,21 @@
                 Percentage of all attack activity in last 24h
               </p>
               <ol class="list-unstyled small mb-0" id="tm-top-countries">
-                <!-- filled by JS -->
+                {% comment %} Filled by threatmap JS using API data {% endcomment %}
               </ol>
-                <div class="card p-3 shadow-sm mt-3" style="background:#0f141a; border:1px solid #1f2a33;">
-                  <h2 class="h6 mb-2" style="color:#fff;">Network & Application Attacks</h2>
-                  <p style="color:#c7d0da; font-size:0.9rem;">
-                    This dashboard visualizes hostile traffic detected across the internet.
-                    <strong>Network-layer attacks</strong> include scanning, port probing, and DDoS events
-                    targeting infrastructure.
-                    <strong>Application-layer attacks</strong> represent malicious HTTP requests such as
-                    credential stuffing, API abuse, and web application exploitation attempts.
-                    Together, these signals provide visibility into global threat activity.
-                  </p>
-                </div>
+
+              <div class="card p-3 shadow-sm mt-3"
+                   style="background:#0f141a; border:1px solid #1f2a33;">
+                <h2 class="h6 mb-2" style="color:#fff;">Network &amp; Application Attacks</h2>
+                <p style="color:#c7d0da; font-size:0.9rem;">
+                  This dashboard visualizes hostile traffic detected across the internet.
+                  <strong>Network-layer attacks</strong> include scanning, port probing, and DDoS events
+                  targeting infrastructure.
+                  <strong>Application-layer attacks</strong> represent malicious HTTP requests such as
+                  credential stuffing, API abuse, and web application exploitation attempts.
+                  Together, these signals provide visibility into global threat activity.
+                </p>
+              </div>
             </div>
           </div>
         </div>
@@ -191,13 +237,21 @@
   </div>
 </div>
 
-{# put these once per page (base template is fine) #}
+{% comment %}
+  Leaflet + heat layer assets and project heatmap script.
+  NOTE (OWASP A02/A05):
+    - For production, consider adding Subresource Integrity (SRI) to CDN scripts
+      and a CSP that allows only expected script sources.
+{% endcomment %}
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script src="https://unpkg.com/leaflet.heat/dist/leaflet-heat.js"></script>
 <script src="{% static 'threatmap/js/heatmap.js' %}?v=5"></script>
 
-<!-- Optional: keep the left column visible while scrolling the map -->
+{% comment %}
+  Optional: keep the left column visible while scrolling the map on large screens.
+  Also, widen the main container slightly for a more spacious layout.
+{% endcomment %}
 <style>
   @media (min-width: 992px) { /* lg and up */
     #left-col { position: sticky; top: 1rem; align-self: flex-start; }
@@ -237,7 +291,6 @@
     }
   }
 
-  /* dark_web.css or similar */
   .attack-summary-bar {
       background:#0f141a;
       border:1px solid #1f2a33;
@@ -247,6 +300,7 @@
   }
 </style>
 
+{% comment %} About / help modal explaining the dashboard and data sources {% endcomment %}
 <div class="modal fade" id="aboutThreatDashboardModal" tabindex="-1"
      aria-labelledby="aboutThreatDashboardLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg modal-dialog-centered">
@@ -288,6 +342,5 @@
     </div>
   </div>
 </div>
-
 
 {% endblock %}
