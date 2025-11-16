@@ -99,3 +99,27 @@ class QueryStringLimitMiddleware:
         if len(raw_qs) > MAX_QS_LENGTH:
             return HttpResponseBadRequest("Query string too long.")
         return self.get_response(request)
+
+# src/core/middleware/bodycap.py
+from django.http import HttpResponse
+
+class BodySizeLimitMiddleware:
+    def __init__(self, get_response):
+        self.get_response = get_response
+        self.max_bytes = 3 * 1024 * 1024  # 3 MB
+
+    def __call__(self, request):
+        length = request.META.get("CONTENT_LENGTH")
+        try:
+            length_int = int(length) if length is not None else 0
+        except ValueError:
+            length_int = 0
+
+        if length_int > self.max_bytes:
+            return HttpResponse(
+                "Request body too large",
+                status=413,
+                content_type="text/plain",
+            )
+
+        return self.get_response(request)
