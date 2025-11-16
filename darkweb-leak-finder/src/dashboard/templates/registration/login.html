@@ -1,0 +1,143 @@
+{% extends "core/base.html" %}
+{% block title %}Login - ShadowScan{% endblock %}
+
+{% block content %}
+
+  {% comment %}
+    registration/login.html
+    -----------------------
+    Custom login form for ShadowScan.
+
+    OWASP Top 10 touchpoints:
+      - A01/A07 (Broken Access Control / Identification & Authentication):
+          * Actual auth logic is handled by Django's auth views.
+          * This template assumes HTTPS is enforced at the deployment level.
+      - A02 (Security Misconfiguration):
+          * CSRF token is included on the POST form.
+          * Sensitive settings (SECRET_KEY, DEBUG) are controlled in settings.py.
+      - A03/A05/A06 (Injection / XSS / Insecure design):
+          * Error messages are rendered with |striptags where appropriate.
+          * No untrusted content is marked |safe.
+      - A04 (Insecure Design):
+          * "next" is passed through, but must be validated server-side
+            to prevent open redirect issues.
+  {% endcomment %}
+
+  {% comment %}
+    Outer flex wrapper centers the login card on the screen.
+  {% endcomment %}
+  <div class="auth-wrapper d-flex justify-content-center align-items-center">
+    <div class="card bg-dark border-0 shadow-sm auth-card">
+      <div class="card-body p-4">
+        <h1 class="h5 mb-4 text-center">Sign in</h1>
+
+        {% comment %}
+          Non-field errors
+          ----------------
+          - Typically used for "invalid username/password" or generic auth errors.
+          - Rendered in a single alert region to avoid leaking extra detail.
+        {% endcomment %}
+        {% if form.non_field_errors %}
+          <div class="alert alert-danger">
+            {{ form.non_field_errors|striptags }}
+          </div>
+        {% endif %}
+
+        {% comment %}
+          Login form
+          ----------
+          - Uses POST + CSRF token (A02).
+          - novalidate keeps server-side validation as source of truth,
+            but browser hints (required, autocomplete) still help UX.
+        {% endcomment %}
+        <form method="post" novalidate>
+          {% csrf_token %}
+
+          {% comment %}
+            Username field
+            --------------
+            - Uses autocomplete="username" for better UX.
+            - Value is repopulated on error so the user doesn't have to retype.
+          {% endcomment %}
+          <div class="mb-3">
+            <label for="{{ form.username.id_for_label }}" class="form-label">
+              Username
+            </label>
+            <input
+              type="text"
+              name="{{ form.username.html_name }}"
+              id="{{ form.username.id_for_label }}"
+              class="form-control"
+              value="{{ form.username.value|default:'' }}"
+              autocomplete="username"
+              required
+            >
+            {% if form.username.errors %}
+              <div class="text-danger small mt-1">
+                {{ form.username.errors|striptags }}
+              </div>
+            {% endif %}
+          </div>
+
+          {% comment %}
+            Password field
+            --------------
+            - autocomplete="current-password" so password managers work.
+            - Never echoes the password back to the user.
+          {% endcomment %}
+          <div class="mb-3">
+            <label for "{{ form.password.id_for_label }}" class="form-label">
+              Password
+            </label>
+            <input
+              type="password"
+              name="{{ form.password.html_name }}"
+              id="{{ form.password.id_for_label }}"
+              class="form-control"
+              autocomplete="current-password"
+              required
+            >
+            {% if form.password.errors %}
+              <div class="text-danger small mt-1">
+                {{ form.password.errors|striptags }}
+              </div>
+            {% endif %}
+          </div>
+
+          {% comment %}
+            "next" redirect parameter
+            -------------------------
+            - Used by Django to send the user back to the page they originally
+              requested after successful login.
+            - The view should validate this value server-side to prevent
+              open redirect attacks (OWASP A01/A04).
+          {% endcomment %}
+          {% if next %}
+            <input type="hidden" name="next" value="{{ next }}">
+          {% endif %}
+
+          {% comment %}
+            Primary submit button
+          {% endcomment %}
+          <button type="submit" class="btn btn-primary w-100 mt-2">
+            Login
+          </button>
+        </form>
+
+        {% comment %}
+          Registration link
+          -----------------
+          - Simple navigation to the registration page.
+          - Actual account creation is handled by Django + server-side validation.
+        {% endcomment %}
+        <p class="text-center mt-3 mb-0 small">
+          Don’t have an account?
+          <a href="{% url 'register' %}" class="link-primary">
+            Create one
+          </a>
+        </p>
+      </div>
+    </div>
+  </div>
+
+{% endblock %}

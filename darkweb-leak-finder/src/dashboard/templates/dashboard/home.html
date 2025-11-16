@@ -1,25 +1,102 @@
 {% extends "core/base.html" %}
+
 {% block content %}
+
+  {% comment %}
+    dashboard/identities.html
+    -------------------------
+    List of all EmailIdentity records with:
+      - A small form to add a new email.
+      - A per-identity action to trigger a HIBP rescan.
+
+    OWASP Top 10 touchpoints:
+      - A01/A07 (Broken Access Control / Identification & Authentication):
+          * This view should be protected with login_required in the view,
+            not in the template.
+      - A02 (Security Misconfiguration):
+          * All state-changing actions (Add, Scan) use POST + CSRF token.
+      - A03/A05/A06 (Injection / XSS / Insecure design):
+          * Email addresses are rendered with Django’s auto-escaping.
+          * No untrusted HTML is marked as safe.
+      - A09 (Security Logging & Monitoring):
+          * Any logging is handled in the view/service layer, not here.
+  {% endcomment %}
+
   <div class="card p-3 shadow-sm">
+    {% comment %} Header for the identities panel {% endcomment %}
     <h1 class="h4 mb-3">Identities</h1>
-    <form method="post" action="{% url 'breaches:add' %}" class="row g-2 mb-3">
+
+    {% comment %}
+      Add-identity form
+      -----------------
+      - Uses POST with CSRF for safe state changes (A02).
+      - Uses type="email" so the browser does basic client-side validation.
+      - Server-side must still validate/normalize the email before use.
+    {% endcomment %}
+    <form method="post"
+          action="{% url 'breaches:add' %}"
+          class="row g-2 mb-3">
       {% csrf_token %}
       <div class="col-auto">
-        <input name="email" class="form-control" placeholder="email@example.com" required>
+        <input
+          name="email"
+          type="email"
+          class="form-control"
+          placeholder="email@example.com"
+          required
+          autocomplete="email"
+        >
       </div>
       <div class="col-auto">
-        <button class="btn btn-primary">Add</button>
+        <button type="submit" class="btn btn-primary">
+          Add
+        </button>
       </div>
     </form>
+
+    {% comment %}
+      Identity list
+      -------------
+      - Shows each stored identity as a row with:
+          * Link to a detail view.
+          * POST-based Scan action to avoid CSRFable GETs.
+    {% endcomment %}
     <ul class="list-group">
       {% for i in identities %}
         <li class="list-group-item d-flex justify-content-between align-items-center">
-          <a href="{% url 'dashboard:detail' i.pk %}">{{ i.address }}</a>
-          <a class="btn btn-sm btn-outline-secondary" href="{% url 'breaches:scan' i.pk %}">Scan</a>
+          {% comment %}
+            Link to the dashboard/detail view for this identity.
+            The URL is generated server-side, so we don't interpolate
+            user input directly into href attributes.
+          {% endcomment %}
+          <a href="{% url 'dashboard:detail' i.pk %}">
+            {{ i.address }}
+          </a>
+
+          {% comment %}
+            "Scan" action
+            -------------
+            - Uses POST with CSRF token (not a simple GET link) to align
+              with OWASP guidance for state-changing operations.
+            - The view 'breaches:scan_identity' should be decorated
+              with @require_POST to enforce method safety.
+          {% endcomment %}
+          <form method="post"
+                action="{% url 'breaches:scan_identity' pk=i.pk %}"
+                class="m-0 d-inline">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-sm btn-outline-secondary">
+              Scan
+            </button>
+          </form>
         </li>
       {% empty %}
-        <li class="list-group-item">No identities yet.</li>
-      {% endfor %}
+        {% comment %} Fallback row when there are no identities yet {% endcomment %}
+        <li class="list-group-item">
+          No identities yet.
+        </li>
+      {% endempty %}
     </ul>
   </div>
+
 {% endblock %}

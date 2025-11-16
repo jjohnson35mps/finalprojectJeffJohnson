@@ -1,59 +1,138 @@
 {% extends "core/base.html" %}
-{% load humanize breach_extras %}
+{% load humanize hibp_extras %}
+
+{% comment %}
+  breaches/identity_detail.html
+  -----------------------------
+  Detail view for a single EmailIdentity, showing all associated breaches.
+
+  OWASP Top 10 touchpoints:
+    - A01/A07 (Access control & auth):
+        Enforced in the view (login_required, per-user checks).
+    - A02 (Security Misconfiguration):
+        CSRF protection on POST form; no secrets in template.
+    - A03/A05/A06 (Injection / XSS / Insecure design):
+        No user input or API data is rendered with |safe.
+        HIBP description is rendered escaped by default.
+    - A09 (Logging & alerting):
+        Any sensitive logging should live in views/services, not here.
+{% endcomment %}
+
 {% block title %}Identity · {{ identity.address }}{% endblock %}
 
 {% block content %}
-<div class="d-flex align-items-center justify-content-between mb-3">
-  <h1 class="h5 mb-0">Breaches for {{ identity.address }}</h1>
-  <div class="d-flex gap-2">
-    <form method="post" action="{% url 'breaches:scan_identity' pk=identity.pk %}">{% csrf_token %}
-      <button type="submit" class="btn btn-sm btn-primary">Rescan HIBP</button>
-    </form>
-    <a class="btn btn-sm btn-secondary" href="{% url 'breaches:dashboard' %}">Back</a>
-  </div>
-</div>
 
-{% if hits %}
+  {% comment %} Header row: identity label + actions (rescan/back) {% endcomment %}
+  <div class="d-flex align-items-center justify-content-between mb-3">
+    <h1 class="h5 mb-0">Breaches for {{ identity.address }}</h1>
+
+    <div class="d-flex gap-2">
+      {% comment %}
+        Rescan HIBP action:
+          - POST + CSRF token (A02).
+          - All sensitive behavior (API key, rate limits) is server-side.
+      {% endcomment %}
+      <form method="post" action="{% url 'breaches:scan_identity' pk=identity.pk %}">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-sm btn-primary">
+          Rescan HIBP
+        </button>
+      </form>
+
+      {% comment %} Simple navigation back to the main breaches dashboard {% endcomment %}
+      <a class="btn btn-sm btn-secondary" href="{% url 'breaches:dashboard' %}">
+        Back
+      </a>
+    </div>
+  </div>
+
+  {% comment %} Breach list or "no breaches" message {% endcomment %}
+  {% if hits %}
     <div class="list-group">
       {% for h in hits %}
         <div class="list-group-item bg-transparent border-secondary breach-card">
+
+          {% comment %} Title + occurrence date row {% endcomment %}
           <div class="d-flex justify-content-between align-items-start">
-            <strong class="text-white">{{ h.title|default:h.breach_name|default:"(untitled breach)" }}</strong>
+            <strong class="text-white">
+              {{ h.title|default:h.breach_name|default:"(untitled breach)" }}
+            </strong>
             <small class="muted">
-              {% if h.occurred_on %}{{ h.occurred_on|date:"Y-m-d" }}{% else %}-{% endif %}
+              {% if h.occurred_on %}
+                {{ h.occurred_on|date:"Y-m-d" }}
+              {% else %}
+                -
+              {% endif %}
             </small>
           </div>
 
+          {% comment %} Breach domain, if provided {% endcomment %}
           {% if h.domain %}
             <div class="small muted">
               Domain:
-              <a class="link" href="https://{{ h.domain }}" target="_blank" rel="noopener">{{ h.domain }}</a>
+              {% comment %}
+                External link to the breach domain:
+                  - target="_blank" → new tab.
+                  - rel="noopener noreferrer" → mitigates reverse tabnabbing and
+                    avoids leaking referrer unnecessarily (A01/A02).
+              {% endcomment %}
+              <a class="link"
+                 href="https://{{ h.domain }}"
+                 target="_blank"
+                 rel="noopener noreferrer">
+                {{ h.domain }}
+              </a>
             </div>
           {% endif %}
 
+          {% comment %} Pwned account count, humanized with thousand separators {% endcomment %}
           {% if h.pwn_count %}
-            <div class="small muted">Pwned: {{ h.pwn_count|intcomma }}</div>
+            <div class="small muted">
+              Pwned: {{ h.pwn_count|intcomma }}
+            </div>
           {% endif %}
 
+          {% comment %}
+            Data classes:
+              - Rendered as disabled badge-like chips for readability.
+              - Values are normalized in the service layer (not raw user input).
+          {% endcomment %}
           {% with dc_list=h.data_classes %}
             {% if dc_list %}
               <div class="mt-2 d-flex flex-wrap gap-2">
                 {% for dc in dc_list %}
-                  <span class="btn btn-sm btn-ghost btn-chip" tabindex="-1" role="button" aria-disabled="true">{{ dc }}</span>
+                  <span class="btn btn-sm btn-ghost btn-chip"
+                        tabindex="-1"
+                        role="button"
+                        aria-disabled="true">
+                    {{ dc }}
+                  </span>
                 {% endfor %}
               </div>
             {% endif %}
           {% endwith %}
 
+          {% comment %}
+            Breach description block:
+
+              IMPORTANT (OWASP A03/A05/A06 – avoid XSS):
+                - Description comes from an external API (HIBP).
+                - We let Django auto-escape it by default (no |safe, no
+                  custom filters).
+          {% endcomment %}
           {% if h.description %}
-            <div class="small mt-2 text-body-secondary">{{ h.description|safe }}</div>
+            <div class="small mt-2 text-body-secondary">
+              {{ h.description|sanitize_hibp }}
+            </div>
           {% endif %}
+
         </div>
-      {% empty %}
-        <div class="alert alert-info">No breaches recorded for this identity yet.</div>
       {% endfor %}
     </div>
-{% else %}
-  <div class="alert alert-info">No breaches recorded for this identity yet.</div>
-{% endif %}
+  {% else %}
+    <div class="alert alert-info">
+      No breaches recorded for this identity yet.
+    </div>
+  {% endif %}
+
 {% endblock %}

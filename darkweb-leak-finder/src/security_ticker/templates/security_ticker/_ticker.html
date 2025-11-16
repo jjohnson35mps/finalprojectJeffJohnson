@@ -1,6 +1,49 @@
-<div id="security-ticker" class="ticker-container">
+{% comment %}
+  Top security ticker banner
+  --------------------------
+  Displays a horizontally scrolling list of "latest vulnerabilities".
+  Content is injected client-side by ticker.js, which:
+    - Fetches items from /api/ticker/
+    - Builds DOM nodes safely (no innerHTML / raw HTML injection)
+
+  OWASP touchpoints:
+    - A03: Injection / A05: Security Misconfiguration
+        * This template does not render untrusted HTML directly.
+        * JavaScript is responsible for safely encoding any data inserted into
+          #ticker-track.
+    - A09: Security Logging & Monitoring
+        * Any logging is handled by the JS and backend, not this fragment.
+{% endcomment %}
+<div
+  id="security-ticker"
+  class="ticker-container"
+  role="status"
+  aria-live="polite"
+>
+  {% comment %}
+    Static label describing what the scrolling items represent.
+    This helps users (and assistive tech) understand the context.
+  {% endcomment %}
   <span class="ticker-title">Latest Vulnerabilities:</span>
+
+  {% comment %}
+    Outer wrapper used to constrain the scrolling area and apply overflow
+    behavior (see ticker.css). The inner .ticker-track element is populated
+    by JavaScript at runtime.
+  {% endcomment %}
   <div class="ticker-track-wrapper">
+    {% comment %}
+      Track container
+      ---------------
+      JavaScript will:
+        - Create <span class="ticker-item">…</span> nodes here
+        - Duplicate them for seamless marquee scrolling
+
+      Security note (A03/A05):
+        - The JS should always treat backend data as untrusted and avoid
+          directly inserting it via innerHTML. Use textContent + safe
+          URL handling instead.
+    {% endcomment %}
     <div class="ticker-track" id="ticker-track"></div>
   </div>
 </div>
