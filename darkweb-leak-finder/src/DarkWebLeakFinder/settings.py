@@ -116,9 +116,11 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    "core.middleware.QueryStringLimitMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
+    "core.middleware.QueryStringSizeLimitMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",                # CSRF (A02/A05)
     "django.contrib.auth.middleware.AuthenticationMiddleware",  # Auth/session
     "django.contrib.messages.middleware.MessageMiddleware",
