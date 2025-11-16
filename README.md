@@ -385,9 +385,10 @@ Stores Shodan scan results for host/IP lookups performed through the app.
      ```
 
 4. **Start the development server**
+    - Add the API keys for Have I been Powned, Shodan, and Cloudflare to darkweb-leak-finder/.env
+    - If not in darkweb-leak-finder/src, cd darkweb-leak-finder/src
    ```
-   Add the API keys for Have I been Powned, Shodan, and Cloudflare to darkweb-leak-finder/.env
-   python darkweb-leak-finder/src/manage.py runserver 8000
+   python manage.py runserver 8000
    ```
 5. Access the application
     - App: http://127.0.0.1:8000/    
