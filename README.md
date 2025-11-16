@@ -314,14 +314,6 @@ Data is normalized → stored → rendered on an interactive **global heat map**
 
 ---
 
-# Using the Application
-
-## 1. Clone the repository
-```
-git clone https://github.com/jjohnson35mps/finalprojectJeffJohnson.git
-cd darkweb-leak-finder
-
-
 ### Database Schema:
 BreachesEmailIdentity
 -id (PK)
@@ -370,37 +362,50 @@ Stores Shodan scan results for host/IP lookups performed through the app.
 
 ---
 
-## Using The App
+# Using the Application
 
-1. **Create your database**
+1. Clone the repository
+    ```
+    git clone https://github.com/jjohnson35mps/finalprojectJeffJohnson.git
+    ```
+2. **Create and populate required files**
+   - Run the Django commands below to create required files:
+     ```
+     python -c "from pathlib import Path; Path('darkweb-leak-finder/.env').touch()"
+     mkdir darkweb-leak-finder/data
+     ```
+
+3. **Create your database**
    - Run the Django commands below to initialize your database:
      ```
+     cd darkweb-leak-finder/src
      python manage.py makemigrations
      python manage.py migrate
      python manage.py createsuperuser
      ```
 
-2. **Start the development server**
+4. **Start the development server**
    ```
-   python manage.py runserver 8000
+   Add the API keys for Have I been Powned, Shodan, and Cloudflare to darkweb-leak-finder/.env
+   python darkweb-leak-finder/src/manage.py runserver 8000
    ```
-3. Access the application
+5. Access the application
     - App: http://127.0.0.1:8000/    
     - Admin: http://127.0.0.1:8000/admin/
 
-4. Register a user
+6. Register a user
     - Go to http://127.0.0.1:8000/accounts/login/ and create a new user account.    
     - Then login through /accounts/login/.    
     - Logout via /accounts/logout/.
 
-5. Use the Email Breach Check
+7. Use the Email Breach Check
     - Enter any email address into the **Email Data Breach Check** field.
     - Click **Add** to store the identity in the dashboard.
     - Click **Scan** to query the HIBP API and retrieve breach history.
     - Results show breach names, dates, data classes, and descriptions.
     - Click **Remove** to delete the identity from the system.
 
-6. Use the Domain or IP Port Scan
+8. Use the Domain or IP Port Scan
     - Enter a domain (example.com) or IPv4 address (1.2.3.4).
     - Click **Scan** to query the Shodan API.
     - The results panel displays:
@@ -411,7 +416,7 @@ Stores Shodan scan results for host/IP lookups performed through the app.
     - Click **Rescan** to refresh the data.
     - Click **Remove** to delete the scan entry.
 
-7. Interact with the Global Attack Heat Map
+9. Interact with the Global Attack Heat Map
     - Use the dropdown selector at the top of the map to choose a dataset:
         - **Application Attack Point of Origin** (layer7_origin)  
         - **Application Attack Target** (layer7_target)  
@@ -423,7 +428,7 @@ Stores Shodan scan results for host/IP lookups performed through the app.
         - Percentage of observed activity  
         - Attack context and threat explanation
 
-8. Use the admin interface
+10. Use the admin interface
     - Log into http://127.0.0.1:8000/admin/ with your superuser credentials to manage all ShadowScan models, including:
         - Email Identities  
         - Breach Hits  
@@ -451,14 +456,17 @@ pip install -r requirements.txt
 ## Installing
  
 1. Clone or download this project to your local machine.
-2. Go to the project root.
-3. Ensure you have the required dependencies listed above installed
+2. Create and populate required files**
+   - python -c "from pathlib import Path; Path('darkweb-leak-finder/.env').touch()"
+   - mkdir darkweb-leak-finder/data
+3. Go to the project root.
+4. Ensure you have the required dependencies listed above installed
    - pip install -r requirements.txt
-4. Initialize the database.
+5. Initialize the database.
    - python manage.py makemigrations
    - python manage.py migrate
    - python manage.py createsuperuser
-5. Start the development server.
+6. Start the development server.
    - python manage.py runserver 8000
  
 ## Executing program
