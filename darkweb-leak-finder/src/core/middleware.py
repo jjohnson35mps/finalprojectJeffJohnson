@@ -16,11 +16,8 @@
 #       * Defensive parsing avoids over-allocating on attacker-controlled input.
 
 from __future__ import annotations
-
 from typing import Callable
 from urllib.parse import parse_qsl
-
-from django.http import HttpResponse
 from django.http import HttpResponseBadRequest
 
 

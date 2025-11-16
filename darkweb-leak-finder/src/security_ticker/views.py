@@ -30,7 +30,7 @@ logger = logging.getLogger("security_ticker")
 # ------------------------------
 @login_required(login_url="login")
 @require_GET
-def ticker_feed(request):
+def ticker_feed(_request):
     """
     Return the ticker feed as JSON for authenticated users.
 

@@ -72,8 +72,8 @@ def _date_or_none(value: str) -> Optional[datetime.date]:
         return None
     try:
         return datetime.strptime(value, "%Y-%m-%d").date()
-    except Exception:
-        logger.debug("[SCAN] invalid date format received: %r", value)
+    except (ValueError, TypeError) as exc:
+        logger.debug("[SCAN] invalid date format received: %r", value, exc)
         return None
 
 
@@ -306,17 +306,6 @@ def scan_identity(request, pk: int):
     except HibpRateLimitError as ex:
         messages.warning(request, str(ex))
         logger.warning("HIBP rate limit for %s: %s", _mask_email(identity.address), ex)
-    except Exception as ex:
-        # OWASP A05: do not expose raw exceptions to users.
-        logger.exception(
-            "[SCAN] unexpected error for %s",
-            _mask_email(identity.address),
-        )
-        messages.error(
-            request,
-            "An unexpected error occurred while scanning this identity. "
-            "Please try again later.",
-        )
 
     return redirect("breaches:identity_detail", pk=identity.pk)
 
@@ -362,7 +351,7 @@ def scan_target(request):
         # Defensive parsing: ensure ports is a list of ints where possible.
         try:
             ports = sorted({int(p) for p in ports_raw})
-        except Exception:
+        except (TypeError, ValueError):
             ports = list(ports_raw)
 
         org = data.get("org") or ""
@@ -418,13 +407,6 @@ def scan_target(request):
         messages.error(
             request,
             "Scan failed due to an error contacting the host intelligence service.",
-        )
-    except Exception:
-        logger.exception("Unexpected error running scan for %s", target)
-        messages.error(
-            request,
-            "An unexpected error occurred while running the scan. "
-            "Please try again later.",
         )
 
     return redirect("breaches:dashboard")

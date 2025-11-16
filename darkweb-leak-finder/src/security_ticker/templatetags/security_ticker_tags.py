@@ -34,8 +34,8 @@ from django import template
 register = template.Library()
 
 
-@register.inclusion_tag("security_ticker/_ticker.html", takes_context=True)
-def security_ticker(context: dict) -> dict:
+@register.inclusion_tag("security_ticker/_ticker.html")
+def security_ticker() -> dict:
     """
     Render the security ticker container markup.
 

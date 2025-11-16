@@ -66,7 +66,7 @@ def home(request):
 
 
 @login_required(login_url="login")
-def detail(request, pk: int):
+def detail(_request, pk: int):
     """
     Detail page entry point for a single identity and its breach history.
 

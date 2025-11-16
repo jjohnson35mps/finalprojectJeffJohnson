@@ -22,10 +22,8 @@
 #       JSON where not necessary.
 
 from __future__ import annotations
-
 from django.db import models
 from django.utils import timezone
-
 from core.models import TimeStampedModel
 
 
@@ -48,7 +46,7 @@ class EmailIdentity(TimeStampedModel):
 
     def __str__(self) -> str:
         """Return the email address for admin/debug display."""
-        return self.address
+        return str(self.address)
 
 
 # ---------------------------------------------------------------------------
@@ -153,7 +151,7 @@ class BreachHit(TimeStampedModel):
 
     def __str__(self) -> str:
         """Readable label combining identity and breach name."""
-        return f"{self.identity.address} -> {self.breach_name}"
+        return f"{str(self.identity)} -> {self.breach_name}"
 
     @property
     def logo_url(self) -> str:
