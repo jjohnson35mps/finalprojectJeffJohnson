@@ -28,10 +28,8 @@
 #         sensitive data (email addresses, breach details) where possible.
 
 from __future__ import annotations
-
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
-
 from breaches.models import EmailIdentity
 
 

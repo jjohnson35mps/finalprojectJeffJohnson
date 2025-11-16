@@ -22,7 +22,6 @@
 #         in middleware or the view, not inside the URLconf.
 
 from django.urls import path
-
 from .views import ticker_feed
 
 

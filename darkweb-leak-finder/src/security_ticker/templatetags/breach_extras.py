@@ -29,10 +29,8 @@
 #       unless they have been explicitly sanitized elsewhere.
 
 from __future__ import annotations
-
 import json
 from typing import List
-
 from django import template
 
 # Django template Library instance used to register custom filters/tags.

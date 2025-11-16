@@ -27,7 +27,6 @@
 #         view/service layer, not in the template tag.
 
 from __future__ import annotations
-
 from django import template
 
 # Django template Library instance used to register custom template tags.

@@ -27,7 +27,6 @@
 #         deletions) via the "breaches" logger configured in settings.py.
 
 from django.urls import path
-
 from . import views
 
 # Namespace for URL reversing: "breaches:dashboard", "breaches:add", etc.

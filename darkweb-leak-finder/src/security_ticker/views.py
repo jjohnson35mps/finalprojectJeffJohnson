@@ -9,13 +9,10 @@
 #   for the scrolling security ticker in the UI.
 
 from __future__ import annotations
-
 import logging
-
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.views.decorators.http import require_GET
-
 from .services.sources import fetch_kev_items
 
 

@@ -33,7 +33,6 @@ OWASP Top 10 touchpoints:
 """
 
 from django.urls import path
-
 from . import views
 
 # Namespacing for this app's URL patterns; used as "dashboard:home", etc.
