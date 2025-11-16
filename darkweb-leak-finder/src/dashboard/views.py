@@ -6,7 +6,7 @@
 #
 # High-level dashboard views for ShadowScan:
 #   - home: list of monitored identities
-#   - detail: breach history for a single identity
+#   - detail: delegates to breaches.identity_detail for a single identity
 #
 # OWASP Top 10 touchpoints:
 #   - A01: Broken Access Control
@@ -18,6 +18,10 @@
 #       * Strict use of Django’s render() & ORM helps avoid misconfig errors.
 #   - A03/A05: Injection / Security Misconfiguration
 #       * No raw SQL; all DB access via Django ORM.
+#   - A04: Insecure Design
+#       * The detail view delegates to the canonical breaches.identity_detail
+#         implementation, avoiding duplicated logic and reducing the risk
+#         of subtle drift between multiple detail views.
 #   - A09: Security Logging and Monitoring
 #       * These views do not log PII directly. Any additional logging
 #         should be done carefully in a dedicated logger, avoiding
@@ -26,7 +30,7 @@
 from __future__ import annotations
 
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, redirect, render
 
 from breaches.models import EmailIdentity
 
@@ -38,7 +42,8 @@ def home(request):
 
     Responsibilities:
       - Show the list of monitored email identities, most recently created first.
-      - Delegate detailed breach information to the detail view.
+      - Delegate detailed breach information to the detail view (which in turn
+        delegates to breaches.identity_detail).
 
     Template:
       - Renders: dashboard/home.html
@@ -63,36 +68,26 @@ def home(request):
 @login_required(login_url="login")
 def detail(request, pk: int):
     """
-    Detail page for a single identity and its breach history.
+    Detail page entry point for a single identity and its breach history.
 
     Responsibilities:
-      - Fetch a single EmailIdentity by primary key.
-      - Load related BreachHit records via the reverse relationship.
-      - Order breaches by most recent occurrence, then by name.
+      - Validate that the requested EmailIdentity exists (404 on invalid pk).
+      - Delegate the actual rendering and breach-query logic to the canonical
+        breaches.identity_detail view to avoid duplicated business logic.
 
     Template:
-      - Renders: dashboard/detail.html
+      - The actual rendering is performed by breaches.identity_detail using
+        breaches/identity_detail.html.
 
     Security notes (OWASP):
-      - A01: Access control is enforced via @login_required.
-        If the system is ever multi-tenant (per-user identities),
-        this view should additionally enforce ownership, e.g.:
-            get_object_or_404(EmailIdentity, pk=pk, owner=request.user)
-      - A03/A05: Uses ORM & safe template rendering; no raw SQL or
-        direct HTML building here.
+      - A01: Access control is enforced via @login_required here and again
+        in breaches.identity_detail (defense in depth).
+      - A03/A05: Uses ORM & safe redirects; no raw SQL or direct HTML building.
+      - A04: Centralizing the detail logic in the breaches app reduces the
+        chance of inconsistencies between multiple detail implementations.
     """
     # Safely resolve the identity or return 404 if the pk is invalid.
-    identity = get_object_or_404(EmailIdentity, pk=pk)
+    get_object_or_404(EmailIdentity, pk=pk)
 
-    # Use the related-name "hits" from BreachHit.identity, newest breaches first.
-    hits = identity.hits.order_by("-occurred_on", "breach_name")
-
-    # Render the detail template with both the identity and its breach hits.
-    return render(
-        request,
-        "dashboard/detail.html",
-        {
-            "identity": identity,
-            "hits": hits,
-        },
-    )
+    # Delegate to the canonical breaches detail view.
+    return redirect("breaches:identity_detail", pk=pk)

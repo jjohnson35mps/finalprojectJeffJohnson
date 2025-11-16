@@ -24,9 +24,9 @@ from __future__ import annotations
 import random
 from typing import List, Dict, Optional
 
-from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
+from django.views.decorators.http import require_GET
 
 from .conf import conf_get
 from .services.fetcher import get_points
@@ -50,6 +50,7 @@ ALLOWED_SOURCES = {
 # ---------------------------------------------------------------------------
 
 @login_required(login_url="login")
+@require_GET
 def heat_points(request):
     """
     Legacy/simple endpoint that returns:
@@ -78,6 +79,7 @@ def heat_points(request):
 # ---------------------------------------------------------------------------
 
 @login_required(login_url="login")
+@require_GET
 def attack_points(request):
     """
     Return simulated attack points for demo or offline scenarios.
@@ -114,6 +116,7 @@ def attack_points(request):
 # ---------------------------------------------------------------------------
 
 @login_required(login_url="login")
+@require_GET
 def threat_points(request):
     """
     Primary JSON endpoint used by the ThreatMap front-end.

@@ -19,10 +19,14 @@
 #   - A09: Security Logging & Monitoring
 #       * Request errors and authentication failures are logged via Django’s
 #         logging configuration in settings.py.
+#   - A04: Insecure Design (routing / separation of concerns)
+#       * Each Django app exposes its own URLConf which is included here
+#         (breaches, dashboard, threatmap, security_ticker, core), keeping
+#         functionality modular and limiting unintended coupling.
 
 from django.contrib import admin
-from django.urls import path, include
 from django.contrib.auth import views as auth_views
+from django.urls import include, path
 
 from core import views as core_views
 
@@ -39,17 +43,10 @@ urlpatterns = [
     # ---------------------------------------------------------------------
     # Authentication & registration
     # ---------------------------------------------------------------------
-    # Built-in Django auth URLs under /accounts/:
-    #   /accounts/login/, /accounts/logout/, /accounts/password_change/, etc.
-    # These views:
-    #   - Use CSRF protection
-    #   - Use Django’s session middleware
-    #   - Avoid exposing raw credentials in URLs (A05).
-    path("accounts/", include("django.contrib.auth.urls")),
-
-    # Registration view (coursework-only; not part of Django core auth)
-    path("accounts/register/", core_views.register, name="register"),
-
+    # NOTE: More specific /accounts/* routes are declared BEFORE the broader
+    # "accounts/" include so they take precedence. This avoids surprising
+    # routing behavior and makes it explicit which views handle login/register.
+    #
     # Explicit login view using a custom template.
     # Using Django’s LoginView avoids re-implementing auth logic.
     path(
@@ -58,10 +55,21 @@ urlpatterns = [
         name="login",
     ),
 
+    # Registration view (coursework-only; not part of Django core auth)
+    path("accounts/register/", core_views.register, name="register"),
+
     # Stand-alone logout route at /logout/.
     # We rely on LOGOUT_REDIRECT_URL in settings.py for the redirect target
     # instead of hard-coding next_page here.
     path("logout/", auth_views.LogoutView.as_view(), name="logout"),
+
+    # Built-in Django auth URLs under /accounts/:
+    #   /accounts/password_change/, /accounts/password_reset/, etc.
+    # These views:
+    #   - Use CSRF protection
+    #   - Use Django’s session middleware
+    #   - Avoid exposing raw credentials in URLs (A05).
+    path("accounts/", include("django.contrib.auth.urls")),
 
     # ---------------------------------------------------------------------
     # Core application routes
@@ -80,6 +88,7 @@ urlpatterns = [
 
     # Core app:
     #   - Currently just delegates to dashboard and breaches URLs (see core/urls.py).
+    #   - Keeping this app separate supports modular design and clearer routing.
     path("core/", include(("core.urls", "core"), namespace="core")),
 
     # ---------------------------------------------------------------------
@@ -87,9 +96,15 @@ urlpatterns = [
     # ---------------------------------------------------------------------
     # Read-only ticker API endpoint used by the front-end to show recent
     # vulnerability headlines. Must not expose secrets or internal logs.
+    #   - A03: Injection
+    #       * Any query params should be validated in security_ticker.views
+    #         before being used in downstream API calls.
     path(
         "api/ticker/",
-        include(("security_ticker.urls", "security_ticker"), namespace="security_ticker"),
+        include(
+            ("security_ticker.urls", "security_ticker"),
+            namespace="security_ticker",
+        ),
     ),
 
     # ---------------------------------------------------------------------
@@ -98,5 +113,10 @@ urlpatterns = [
     # ThreatMap app:
     #   - Provides JSON and front-end views for global attack heat map.
     #   - External API tokens are handled in settings/env (not in URLs).
-    path("threatmap/", include("threatmap.urls")),
+    #   - A03: Injection
+    #       * Query parameters (e.g., source) are validated in threatmap.views.
+    path(
+        "threatmap/",
+        include(("threatmap.urls", "threatmap"), namespace="threatmap"),
+    ),
 ]

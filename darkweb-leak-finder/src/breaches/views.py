@@ -159,8 +159,8 @@ def add_identity(request):
         return redirect("breaches:dashboard")
 
     # Optional: could redirect to dashboard instead of rendering a template.
-    return render(request, "breaches/identity_detail.html")
-
+    # return render(request, "breaches/identity_detail.html")
+    return redirect("breaches:dashboard")
 
 @login_required(login_url="login")
 @require_POST
@@ -188,10 +188,10 @@ def scan_identity(request, pk: int):
     try:
         results = client.breaches_for_account(identity.address)
         logger.info(
-            "[SCAN] %s status=%s items=%s",
+            "[SCAN] %s status=%s count=%s",
             _mask_email(identity.address),
             client.last_status,
-            client.last_items,
+            len(results or []),
         )
 
         seen_names: set[str] = set()
