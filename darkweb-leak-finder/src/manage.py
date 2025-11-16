@@ -56,7 +56,7 @@ def _load_env() -> None:
     try:
         # Optional dependency; used only if installed.
         from dotenv import load_dotenv  # type: ignore[import]
-    except Exception:
+    except ImportError:
         load_dotenv = None  # If python-dotenv is missing, we simply skip
 
     if load_dotenv:

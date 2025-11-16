@@ -117,6 +117,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "core.middleware.QueryStringLimitMiddleware",
+    "core.middleware.BodySizeLimitMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",

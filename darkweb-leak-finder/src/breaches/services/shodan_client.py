@@ -37,7 +37,7 @@ logger = logging.getLogger("breaches.shodan")
 try:
     from django.conf import settings  # type: ignore
     SHODAN_API_KEY = getattr(settings, "SHODAN_API_KEY", None)
-except Exception:
+except ImportError as exc:
     SHODAN_API_KEY = None
 
 # Fallback to environment if settings not present or key not set there.
@@ -60,7 +60,7 @@ def _is_ip(value: str) -> bool:
     try:
         ipaddress.ip_address(value)
         return True
-    except Exception:
+    except (ValueError, ipaddress.AddressValueError):
         return False
 
 
@@ -193,3 +193,4 @@ def fetch_host(target: str, timeout: int = 10, retries: int = 2) -> Optional[Dic
             # After max retries, log with traceback and surface a clean error.
             logger.exception("Shodan request failed after retries for %s", ip)
             raise ShodanError(f"Network error when calling Shodan: {e}") from e
+    return None

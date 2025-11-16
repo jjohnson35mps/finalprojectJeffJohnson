@@ -51,7 +51,7 @@ ALLOWED_SOURCES = {
 
 @login_required(login_url="login")
 @require_GET
-def heat_points(request):
+def heat_points(_request):
     """
     Legacy/simple endpoint that returns:
         {
@@ -80,7 +80,7 @@ def heat_points(request):
 
 @login_required(login_url="login")
 @require_GET
-def attack_points(request):
+def attack_points(_request):
     """
     Return simulated attack points for demo or offline scenarios.
 

@@ -47,7 +47,9 @@
         <h2 class="h5 mb-3">Email Data Breach Check</h2>
         <form method="post" action="{% url 'breaches:add' %}" class="d-flex gap-2 mb-3">
           {% csrf_token %}
-          <input name="email"
+          <label for="email" class="visually-hidden">Email address</label>
+            <input id="email"
+                 name="email"
                  type="email"
                  class="form-control"
                  placeholder="email@example.com"
@@ -110,7 +112,9 @@
 
         <form method="post" action="{% url 'breaches:scan_target' %}" class="d-flex gap-2">
           {% csrf_token %}
-          <input name="target"
+          <label for="target" class="visually-hidden">Scan Target</label>
+          <input id="target"
+                 name="target"
                  type="text"
                  class="form-control"
                  placeholder="example.com or 1.2.3.4"
@@ -185,7 +189,8 @@
           <h2 class="h5 mb-0">Global Attack Heat Map</h2>
 
           {% comment %} Source selector for different Cloudflare Radar feeds {% endcomment %}
-          <select id="tm-radar-source"
+          <label for="tm-radar-source" class="visually-hidden">Heatmap Selection</label>
+            <select id="tm-radar-source"
                   class="form-select form-select-sm ms-2"
                   style="width:auto;">
             <option value="layer7_origin" selected>Application Attack Point of Origin</option>

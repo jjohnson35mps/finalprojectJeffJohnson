@@ -27,14 +27,12 @@
 # ------------------------------------------------------------
 
 from __future__ import annotations
-
 import os
 import re
 import time
 import logging
 from typing import Any, List, Optional
 from urllib.parse import quote
-
 import requests
 
 # Module-level logger used by the breaches app. Configure handlers/levels
