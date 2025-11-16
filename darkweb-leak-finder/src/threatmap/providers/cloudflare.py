@@ -9,12 +9,10 @@
 #   geo-point format for the ThreatMap heatmap.
 
 from __future__ import annotations
-
 import logging
 import os
 import random
 from typing import List, Dict, Tuple, Any
-
 import requests
 
 logger = logging.getLogger(__name__)

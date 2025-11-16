@@ -20,18 +20,15 @@
 #         raw API responses or secrets.
 
 from __future__ import annotations
-
 import logging
 from datetime import datetime
 from typing import Any, Dict, Optional
-
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.utils.dateparse import parse_datetime
 from django.views.decorators.http import require_POST
-
 from .models import BreachHit, EmailIdentity, ShodanFinding
 from .services.hibp import HibpClient, HibpAuthError, HibpRateLimitError
 from .services.shodan_client import fetch_host, ShodanError

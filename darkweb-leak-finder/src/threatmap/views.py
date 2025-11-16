@@ -20,14 +20,11 @@
 #         (e.g., providers / services modules) rather than here.
 
 from __future__ import annotations
-
 import random
 from typing import List, Dict, Optional
-
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.views.decorators.http import require_GET
-
 from .conf import conf_get
 from .services.fetcher import get_points
 

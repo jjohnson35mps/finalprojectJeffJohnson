@@ -13,10 +13,8 @@
 #       Never call |safe directly on raw HIBP data.
 
 from __future__ import annotations
-
 from html import escape
 from html.parser import HTMLParser
-
 from django import template
 from django.utils.safestring import mark_safe
 
