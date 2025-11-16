@@ -19,18 +19,24 @@ ShadowScan provides a comprehensive cybersecurity situational awareness dashboar
 - **Email Breach Intelligence (HIBP API)**  
   Check if an email identity has appeared in known breach corpuses.  
   Store breach history, timestamps, and classifications.
+  API: https://haveibeenpwned.com/api/v3
 
 - **Shodan Host Reconnaissance**  
-  Query Shodan to gather exposed ports, services, host metadata, and vulnerabilities.  
+  Query Shodan to gather exposed ports, services, and host metadata.  
   Generate quick-look asset summaries from any IPv4/hostname input.
+  API: https://api.shodan.io/shodan/host/{ip}?key={key}
 
 - **Global Threat Telemetry (Cloudflare Radar × 4)**  
   Includes global Layer-3 and Layer-7 attack data:  
-  - `layer7_origin` — Top HTTP attack origin regions  
-  - `layer7_target` — Top HTTP attack target regions  
+  - `layer7_origin` — Top application-level attack origin regions  
+  - `layer7_target` — Top application-level attack target regions  
   - `layer3_origin` — Top network-level attack origin regions  
   - `layer3_target` — Top network-level attack target regions  
   Data is visualized as a world heatmap with live updates.
+  API: radar/attacks/layer7/top/locations/origin
+       radar/attacks/layer7/top/locations/target
+       radar/attacks/layer3/top/locations/origin
+       radar/attacks/layer3/top/locations/target
 
 - **Security Ticker (KEV + CVE Intelligence)**  
   Displays actively exploited vulnerabilities and high-severity CVEs from curated sources.
