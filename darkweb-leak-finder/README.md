@@ -311,5 +311,5 @@ This project is licensed under the MIT License - see the LICENSE.md file for det
 Inspiration, code snippets, etc.
 - [Django Tutorial](https://docs.djangoproject.com/en/5.2/intro/tutorial01/)
 - [ChatGPT](https://chatgpt.com/g/g-p-690d2161b8388191be61b9e1de8517d7-final-project/project)
-*** I use a ChatGPT paid acct, so I cannot share ***
+** I use a ChatGPT paid acct, so I cannot share **
 
