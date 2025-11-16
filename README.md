@@ -66,7 +66,7 @@ ShadowScan provides a comprehensive cybersecurity situational awareness dashboar
 ## Technologies Used
 
 - **Python 3.13.7**  
-- **Django 5.x**  
+- **Django 5.2.8**  
 - **Bootstrap 5 (Dark Theme)**  
 - **SQLite / Django ORM**  
 - **JavaScript Heatmap Rendering (Leaflet / custom)**  
@@ -82,67 +82,207 @@ ShadowScan provides a comprehensive cybersecurity situational awareness dashboar
 ## Project Structure
 
 ```
-darkweb-leak-finder/
-│ .env
-│ .gitignore
-│ docker-compose.yml
-│ Dockerfile
-│ manage.py
-│ pyproject.toml
-│ README.md ← This file
-│ requirements.txt
-│ ruff.toml
+darkweb-leak-finder
+│   .env
+│   .gitignore
+│   docker-compose.yml
+│   Dockerfile
+│   hibp.py
+│   manage.py
+│   pyproject.toml
+│   requirements.txt
+│   ruff.toml
 │
-├───.github/workflows
-│ ci.yml ← GitHub Actions CI
+├───.github
+│   └───workflows
+│           ci.yml
 │
 ├───data
-│ db.sqlite3
+│       db.sqlite3
 │
 └───src
-│ manage.py
-│ pytest.ini
-│
-├───breaches
-│ ├───services (HIBP + Shodan clients)
-│ ├───templates/breaches
-│ ├───templatetags
-│ ├───migrations
-│ ├───static/breaches
-│ ├───tests
-│ └───models.py, views.py, urls.py
-│
-├───core
-│ ├───middleware.py ← Query/body size guards (OWASP)
-│ ├───templates/core/base.html
-│ ├───static/core/dark.css
-│ ├───services
-│ └───urls.py, views.py
-│
-├───DarkWebLeakFinder (project config)
-│ settings.py
-│ urls.py
-│
-├───dashboard
-│ ├───templates/dashboard
-│ ├───static/dashboard
-│ ├───urls.py, views.py
-│
-├───security_ticker
-│ ├───services/sources.py
-│ ├───templates/security_ticker/_ticker.html
-│ ├───static/security_ticker
-│ ├───templatetags/security_ticker_tags.py
-│ └───urls.py, views.py
-│
-└───threatmap
-├───providers/cloudflare.py ← 4× Radar API endpoints
-├───management/commands/fetch_threatmap.py
-├───templates/threatmap/heatmap.html
-├───static/threatmap/js/heatmap.js
-├───services/fetcher.py
-├───tests/test_providers.py
-└───models.py, views.py, urls.py
+    │   manage.py
+    │   pytest.ini
+    │
+    ├───DarkWebLeakFinder
+    │   │   asgi.py
+    │   │   settings.py
+    │   │   urls.py
+    │   │   wsgi.py
+    │   │   __init__.py
+    │
+    ├───breaches
+    │   │   admin.py
+    │   │   apps.py
+    │   │   models.py
+    │   │   urls.py
+    │   │   views.py
+    │   │   __init__.py
+    │   │
+    │   ├───migrations
+    │   │   │   0001_initial.py
+    │   │   │   0002_breachhit_added_on_breachhit_data_classes_and_more.py
+    │   │   │   0003_shodanfinding.py
+    │   │   │   0004_alter_breachhit_options_alter_breachhit_data_classes_and_more.py
+    │   │   │   __init__.py
+    │   │
+    │   ├───services
+    │   │   │   hibp.py
+    │   │   │   shodan_client.py
+    │   │
+    │   ├───static
+    │   │   └───breaches
+    │   │       ├───css
+    │   │       ├───img
+    │   │       └───js
+    │   │
+    │   ├───templates
+    │   │   └───breaches
+    │   │           identity_detail.html
+    │   │           main_db.html
+    │   │
+    │   ├───templatetags
+    │   │   │   hibp_extras.py
+    │   │   │   __init__.py
+    │   │
+    │   └───tests
+    │           __init__.py
+    │
+    ├───core
+    │   │   admin.py
+    │   │   apps.py
+    │   │   middleware.py
+    │   │   models.py
+    │   │   urls.py
+    │   │   views.py
+    │   │   __init__.py
+    │   │
+    │   ├───migrations
+    │   │   │   __init__.py
+    │   │
+    │   ├───services
+    │   │       utils.py
+    │   │
+    │   ├───static
+    │   │   └───core
+    │   │       │   dark.css
+    │   │       ├───css
+    │   │       ├───img
+    │   │       └───js
+    │   │
+    │   ├───templates
+    │   │   └───core
+    │   │           base.html
+    │   │
+    │   └───tests
+    │           __init__.py
+    │
+    ├───dashboard
+    │   │   admin.py
+    │   │   apps.py
+    │   │   models.py
+    │   │   urls.py
+    │   │   views.py
+    │   │   __init__.py
+    │   │
+    │   ├───migrations
+    │   │   │   __init__.py
+    │   │
+    │   ├───services
+    │   │
+    │   ├───static
+    │   │   └───dashboard
+    │   │       ├───css
+    │   │       ├───img
+    │   │       └───js
+    │   │
+    │   ├───templates
+    │   │   ├───dashboard
+    │   │   │       detail.html
+    │   │   │       home.html
+    │   │   │
+    │   │   └───registration
+    │   │           login.html
+    │   │           register.html
+    │   │
+    │   └───tests
+    │           __init__.py
+    │
+    ├───data
+    │       kev_cache.json
+    │
+    ├───security_ticker
+    │   │   apps.py
+    │   │   urls.py
+    │   │   views.py
+    │   │   __init__.py
+    │   │
+    │   ├───migrations
+    │   │
+    │   ├───services
+    │   │   │   sources.py
+    │   │   │   __init__.py
+    │   │
+    │   ├───static
+    │   │   └───security_ticker
+    │   │       ├───css
+    │   │       │       ticker.css
+    │   │       ├───img
+    │   │       └───js
+    │   │               ticker.js
+    │   │
+    │   ├───templates
+    │   │   └───security_ticker
+    │   │           _ticker.html
+    │   │
+    │   ├───templatetags
+    │   │   │   breach_extras.py
+    │   │   │   security_ticker_tags.py
+    │   │   │   __init__.py
+    │   │
+    │   └───tests
+    │           __init__.py
+    │
+    ├───templates
+    │   (project-level templates, if any)
+    │
+    └───threatmap
+        │   admin.py
+        │   apps.py
+        │   conf.py
+        │   models.py
+        │   urls.py
+        │   views.py
+        │   __init__.py
+        │
+        ├───management
+        │   ├───commands
+        │   │       fetch_threatmap.py
+        │   │
+        │   └───__init__.py
+        │
+        ├───providers
+        │   │   base.py
+        │   │   cloudflare.py
+        │   │   __init__.py
+        │
+        ├───services
+        │   │   fetcher.py
+        │   │   __init__.py
+        │
+        ├───static
+        │   └───threatmap
+        │       └───js
+        │               heatmap.js
+        │
+        ├───templates
+        │   └───threatmap
+        │           heatmap.html
+        │
+        └───tests
+                test_providers.py
+                __init__.py
+
 ```
 
 ---
@@ -151,17 +291,17 @@ darkweb-leak-finder/
 
 ### 🔹 HaveIBeenPwned (HIBP)
 Used for **breach intelligence**:
-- `/breachedaccount/{email}`  
+- `https://haveibeenpwned.com/api/v3`  
 - API key required (stored in `.env`)
 - Returns breach metadata, data classes, timestamps.
 
 ### 🔹 Shodan API
 Used for **exposure reconnaissance**:
-- `/shodan/host/{ip}`  
+- `https://api.shodan.io/shodan/host/{ip}?key={key}`  
 - Discover open ports, vulnerabilities, and host metadata.
 
 ### 🔹 Cloudflare Radar (4 Endpoints)
-All used via your `cloudflare.py` provider:
+All used via `cloudflare.py` provider:
 
 | Key | Endpoint | Field | Description |
 |------|----------|--------|-------------|
@@ -183,10 +323,50 @@ cd darkweb-leak-finder
 
 
 ### Database Schema:
-- **Question:** id, question_text, pub_date  
-- **Choice:** id, question (FK), choice_text, votes  
+BreachesEmailIdentity
+-id (PK)
+-created_at
+-updated_at
+-address — unique
+Stores a user-submitted email address to monitor for breaches. 
 
-Foreign keys and relationships are managed automatically through Django’s ORM and migrations.
+BreachesBreachHit
+-id (PK)
+-created_at
+-updated_at
+-breach_name
+-domain
+-occurred_on
+-identity_id — (FK → BreachesEmailIdentity.id)
+-added_on
+-data_classes (JSON)
+-description
+-is_fabricated
+-is_malware
+-is_retired
+-is_sensitive
+-is_spam_list
+-is_stealer_log
+-is_subscription_free
+-is_verified
+-logo_path
+-modified_on
+-pwn_count
+-title
+-UNIQUE: (identity_id, breach_name)
+Stores all HIBP breach events tied to a specific monitored email identity.
+
+BreachesShodanFinding
+-id (PK)
+-ip
+-hostnames (JSON)
+-ports (JSON)
+-org
+-raw (JSON)
+-created_on
+-last_seen
+-os
+Stores Shodan scan results for host/IP lookups performed through the app.
 
 ---
 
@@ -201,9 +381,9 @@ Foreign keys and relationships are managed automatically through Django’s ORM 
      ```
 
 2. **Start the development server**
-   ```bash
+   ```
    python manage.py runserver 8000
-   
+   ```
 3. Access the application
     - App: http://127.0.0.1:8000/    
     - Admin: http://127.0.0.1:8000/admin/
@@ -215,7 +395,7 @@ Foreign keys and relationships are managed automatically through Django’s ORM 
 
 5. Use the Email Breach Check
     - Enter any email address into the **Email Data Breach Check** field.
-    - Click **Add** to store the identity in your dashboard.
+    - Click **Add** to store the identity in the dashboard.
     - Click **Scan** to query the HIBP API and retrieve breach history.
     - Results show breach names, dates, data classes, and descriptions.
     - Click **Remove** to delete the identity from the system.
@@ -232,15 +412,14 @@ Foreign keys and relationships are managed automatically through Django’s ORM 
     - Click **Remove** to delete the scan entry.
 
 7. Interact with the Global Attack Heat Map
-    - Use the dropdown selector at the top-right of the map to choose a dataset:
+    - Use the dropdown selector at the top of the map to choose a dataset:
         - **Application Attack Point of Origin** (layer7_origin)  
         - **Application Attack Target** (layer7_target)  
         - **Network Attack Point of Origin** (layer3_origin)  
         - **Network Attack Target** (layer3_target)
-    - Hover over hotspot regions to view country-specific attack distribution.
     - Pan and zoom the world map using the mousewheel and controls.
     - The right-hand sidebar displays:
-        - Top attacking countries  
+        - Top countries for attacks and targets  
         - Percentage of observed activity  
         - Attack context and threat explanation
 

@@ -22,10 +22,16 @@
 
 from django.contrib.auth import login
 from django.contrib.auth.forms import UserCreationForm
+from django.core.exceptions import ValidationError, SuspiciousOperation
+from django.http import HttpRequest, HttpResponse, HttpResponseBadRequest
 from django.shortcuts import render, redirect
+import logging
+
+# Module-level logger for auth-related events (A09: logging & monitoring)
+logger = logging.getLogger(__name__)
 
 
-def register_view(request):
+def register_view(request: HttpRequest) -> HttpResponse:
     """
     Handle user registration using Django's built-in UserCreationForm.
 
@@ -52,28 +58,43 @@ def register_view(request):
         return redirect("breaches:dashboard")
 
     if request.method == "POST":
-        # Bind POST data to the built-in registration form
-        form = UserCreationForm(request.POST)
+        try:
+            # Bind POST data to the built-in registration form
+            form = UserCreationForm(request.POST)
 
-        if form.is_valid():
-            # Create the user account
-            user = form.save()
+            if form.is_valid():
+                # Create the user account
+                user = form.save()
 
-            # Immediately log in the new user to improve UX
-            login(request, user)
+                # Immediately log in the new user to improve UX
+                login(request, user)
 
-            # Redirect to the main dashboard after successful registration
-            return redirect("breaches:dashboard")
-        # If invalid, fall through and re-render form with errors
+                # Redirect to the main dashboard after successful registration
+                return redirect("breaches:dashboard")
+            # If invalid, fall through and re-render form with errors
+
+        except (ValidationError, ValueError, SuspiciousOperation) as exc:
+            # Expected bad/fuzzed input or suspicious payload:
+            #   - Log at warning level for monitoring (A09).
+            #   - Return a generic 400 to avoid leaking stack traces or internals.
+            logger.warning("Rejected registration payload: %s", exc, exc_info=False)
+            return HttpResponseBadRequest("Invalid registration data.")
+
+        except Exception as exc:
+            # Last-resort guardrail: catch unexpected edge cases so they do not
+            # bubble up as 500 Internal Server Errors during fuzzing/stress tests.
+            logger.error("Unexpected error during registration", exc_info=True)
+            return HttpResponseBadRequest("Unable to process registration.")
+
     else:
         # Unbound form for initial GET request
         form = UserCreationForm()
 
-    # Render the registration template with the form
+    # Render the registration template with the form (GET or invalid POST)
     return render(request, "registration/register.html", {"form": form})
 
 
-def register(request):
+def register(request: HttpRequest) -> HttpResponse:
     """
     Backwards-compatible alias for register_view.
 
