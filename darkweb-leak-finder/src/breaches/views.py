@@ -29,6 +29,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
+from django.utils.dateparse import parse_datetime
 from django.views.decorators.http import require_POST
 
 from .models import BreachHit, EmailIdentity, ShodanFinding
@@ -366,7 +367,37 @@ def scan_target(request):
 
         org = data.get("org") or ""
         os_field = data.get("os") or ""
-        last_seen = data.get("last_update") or timezone.now()
+
+        # ---- FIXED last_seen handling (no more naive datetimes) ----
+        raw_last = data.get("last_update")
+        last_seen = None
+
+        if isinstance(raw_last, str):
+            # Try to parse an ISO-ish string from Shodan
+            parsed = parse_datetime(raw_last)
+            if parsed is not None:
+                if timezone.is_naive(parsed):
+                    last_seen = timezone.make_aware(
+                        parsed,
+                        timezone.get_current_timezone(),
+                    )
+                else:
+                    last_seen = parsed
+
+        elif isinstance(raw_last, datetime):
+            # Shodan client might already give us a datetime object
+            if timezone.is_naive(raw_last):
+                last_seen = timezone.make_aware(
+                    raw_last,
+                    timezone.get_current_timezone(),
+                )
+            else:
+                last_seen = raw_last
+
+        # Fallback if nothing valid came out of raw_last
+        if last_seen is None:
+            last_seen = timezone.now()
+        # ---- end last_seen handling ----
 
         ShodanFinding.objects.update_or_create(
             ip=ip,
@@ -388,7 +419,7 @@ def scan_target(request):
             request,
             "Scan failed due to an error contacting the host intelligence service.",
         )
-    except Exception as e:
+    except Exception:
         logger.exception("Unexpected error running scan for %s", target)
         messages.error(
             request,
