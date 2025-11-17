@@ -1,4 +1,3 @@
 /scaffold.py
 /.env
-/stressor.py
-/path_checker.py
+/scripts/
