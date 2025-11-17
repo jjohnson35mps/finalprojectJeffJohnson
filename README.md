@@ -297,10 +297,12 @@ Used for **breach intelligence**:
 
 ### 🔹 Shodan API
 Used for **exposure reconnaissance**:
-- `https://api.shodan.io/shodan/host/{ip}?key={key}`  
+- `https://api.shodan.io/shodan/host/{ip}?key={key}` 
+- - API key required (stored in `.env`)
 - Discover open ports, vulnerabilities, and host metadata.
 
 ### 🔹 Cloudflare Radar (4 Endpoints)
+- API key required (stored in `.env`)
 All used via `cloudflare.py` provider:
 
 | Key | Endpoint | Field | Description |
