@@ -87,7 +87,6 @@ darkweb-leak-finder
 │   .gitignore
 │   docker-compose.yml
 │   Dockerfile
-│   hibp.py
 │   manage.py
 │   pyproject.toml
 │   requirements.txt
@@ -97,19 +96,38 @@ darkweb-leak-finder
 │   └───workflows
 │           ci.yml
 │
+├───.pytest_cache
+│   │   .gitignore
+│   │   CACHEDIR.TAG
+│   │   README.md
+│   │
+│   └───v
+│       └───cache
+│               lastfailed
+│               nodeids
+│
 ├───data
 │       db.sqlite3
+│
+├───scripts
+│       path_checker.py
+│       stressor.py
+│       stressor_20251117_123359.log
 │
 └───src
     │   manage.py
     │   pytest.ini
+    │   schema_snapshot_models.py
     │
-    ├───DarkWebLeakFinder
-    │   │   asgi.py
-    │   │   settings.py
-    │   │   urls.py
-    │   │   wsgi.py
-    │   │   __init__.py
+    ├───.pytest_cache
+    │   │   .gitignore
+    │   │   CACHEDIR.TAG
+    │   │   README.md
+    │   │
+    │   └───v
+    │       └───cache
+    │               lastfailed
+    │               nodeids
     │
     ├───breaches
     │   │   admin.py
@@ -125,17 +143,27 @@ darkweb-leak-finder
     │   │   │   0003_shodanfinding.py
     │   │   │   0004_alter_breachhit_options_alter_breachhit_data_classes_and_more.py
     │   │   │   __init__.py
+    │   │   │
+    │   │   └───__pycache__
+    │   │           0001_initial.cpython-313.pyc
+    │   │           0002_breachhit_added_on_breachhit_data_classes_and_more.cpython-313.pyc
+    │   │           0003_shodanfinding.cpython-313.pyc
+    │   │           0004_alter_breachhit_options_alter_breachhit_data_classes_and_more.cpython-313.pyc
+    │   │           __init__.cpython-313.pyc
     │   │
     │   ├───services
     │   │   │   hibp.py
     │   │   │   shodan_client.py
+    │   │   │
+    │   │   └───__pycache__
+    │   │           hibp.cpython-313.pyc
+    │   │           shodan_client.cpython-313.pyc
     │   │
     │   ├───static
     │   │   └───breaches
     │   │       ├───css
     │   │       ├───img
     │   │       └───js
-    │   │
     │   ├───templates
     │   │   └───breaches
     │   │           identity_detail.html
@@ -144,9 +172,19 @@ darkweb-leak-finder
     │   ├───templatetags
     │   │   │   hibp_extras.py
     │   │   │   __init__.py
+    │   │   │
+    │   │   └───__pycache__
+    │   │           hibp_extras.cpython-313.pyc
+    │   │           __init__.cpython-313.pyc
     │   │
-    │   └───tests
-    │           __init__.py
+    │   ├───tests
+    │   └───__pycache__
+    │           admin.cpython-313.pyc
+    │           apps.cpython-313.pyc
+    │           models.cpython-313.pyc
+    │           urls.cpython-313.pyc
+    │           views.cpython-313.pyc
+    │           __init__.cpython-313.pyc
     │
     ├───core
     │   │   admin.py
@@ -159,6 +197,9 @@ darkweb-leak-finder
     │   │
     │   ├───migrations
     │   │   │   __init__.py
+    │   │   │
+    │   │   └───__pycache__
+    │   │           __init__.cpython-313.pyc
     │   │
     │   ├───services
     │   │       utils.py
@@ -166,16 +207,36 @@ darkweb-leak-finder
     │   ├───static
     │   │   └───core
     │   │       │   dark.css
+    │   │       │
     │   │       ├───css
     │   │       ├───img
     │   │       └───js
-    │   │
     │   ├───templates
     │   │   └───core
     │   │           base.html
     │   │
-    │   └───tests
-    │           __init__.py
+    │   ├───tests
+    │   └───__pycache__
+    │           admin.cpython-313.pyc
+    │           apps.cpython-313.pyc
+    │           middleware.cpython-313.pyc
+    │           models.cpython-313.pyc
+    │           urls.cpython-313.pyc
+    │           views.cpython-313.pyc
+    │           __init__.cpython-313.pyc
+    │
+    ├───DarkWebLeakFinder
+    │   │   asgi.py
+    │   │   settings.py
+    │   │   urls.py
+    │   │   wsgi.py
+    │   │   __init__.py
+    │   │
+    │   └───__pycache__
+    │           settings.cpython-313.pyc
+    │           urls.cpython-313.pyc
+    │           wsgi.cpython-313.pyc
+    │           __init__.cpython-313.pyc
     │
     ├───dashboard
     │   │   admin.py
@@ -187,15 +248,16 @@ darkweb-leak-finder
     │   │
     │   ├───migrations
     │   │   │   __init__.py
+    │   │   │
+    │   │   └───__pycache__
+    │   │           __init__.cpython-313.pyc
     │   │
     │   ├───services
-    │   │
     │   ├───static
     │   │   └───dashboard
     │   │       ├───css
     │   │       ├───img
     │   │       └───js
-    │   │
     │   ├───templates
     │   │   ├───dashboard
     │   │   │       detail.html
@@ -205,8 +267,14 @@ darkweb-leak-finder
     │   │           login.html
     │   │           register.html
     │   │
-    │   └───tests
-    │           __init__.py
+    │   ├───tests
+    │   └───__pycache__
+    │           admin.cpython-313.pyc
+    │           apps.cpython-313.pyc
+    │           models.cpython-313.pyc
+    │           urls.cpython-313.pyc
+    │           views.cpython-313.pyc
+    │           __init__.cpython-313.pyc
     │
     ├───data
     │       kev_cache.json
@@ -218,15 +286,19 @@ darkweb-leak-finder
     │   │   __init__.py
     │   │
     │   ├───migrations
-    │   │
     │   ├───services
     │   │   │   sources.py
     │   │   │   __init__.py
+    │   │   │
+    │   │   └───__pycache__
+    │   │           sources.cpython-313.pyc
+    │   │           __init__.cpython-313.pyc
     │   │
     │   ├───static
     │   │   └───security_ticker
     │   │       ├───css
     │   │       │       ticker.css
+    │   │       │
     │   │       ├───img
     │   │       └───js
     │   │               ticker.js
@@ -239,13 +311,19 @@ darkweb-leak-finder
     │   │   │   breach_extras.py
     │   │   │   security_ticker_tags.py
     │   │   │   __init__.py
+    │   │   │
+    │   │   └───__pycache__
+    │   │           breach_extras.cpython-313.pyc
+    │   │           security_ticker_tags.cpython-313.pyc
+    │   │           __init__.cpython-313.pyc
     │   │
-    │   └───tests
-    │           __init__.py
+    │   └───__pycache__
+    │           apps.cpython-313.pyc
+    │           urls.cpython-313.pyc
+    │           views.cpython-313.pyc
+    │           __init__.cpython-313.pyc
     │
     ├───templates
-    │   (project-level templates, if any)
-    │
     └───threatmap
         │   admin.py
         │   apps.py
@@ -256,19 +334,30 @@ darkweb-leak-finder
         │   __init__.py
         │
         ├───management
+        │   │   __init__.py
+        │   │
         │   ├───commands
         │   │       fetch_threatmap.py
         │   │
-        │   └───__init__.py
+        │   └───__pycache__
+        │           __init__.cpython-313.pyc
         │
         ├───providers
         │   │   base.py
         │   │   cloudflare.py
         │   │   __init__.py
+        │   │
+        │   └───__pycache__
+        │           cloudflare.cpython-313.pyc
+        │           __init__.cpython-313.pyc
         │
         ├───services
         │   │   fetcher.py
         │   │   __init__.py
+        │   │
+        │   └───__pycache__
+        │           fetcher.cpython-313.pyc
+        │           __init__.cpython-313.pyc
         │
         ├───static
         │   └───threatmap
@@ -279,9 +368,18 @@ darkweb-leak-finder
         │   └───threatmap
         │           heatmap.html
         │
-        └───tests
-                test_providers.py
-                __init__.py
+        ├───tests
+        │       test_providers.py
+        │       __init__.py
+        │
+        └───__pycache__
+                admin.cpython-313.pyc
+                apps.cpython-313.pyc
+                conf.cpython-313.pyc
+                models.cpython-313.pyc
+                urls.cpython-313.pyc
+                views.cpython-313.pyc
+                __init__.cpython-313.pyc
 
 ```
 
