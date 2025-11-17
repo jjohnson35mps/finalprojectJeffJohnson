@@ -15,5 +15,5 @@ staticfiles/
 .idea/
 .vscode/
 
-/.env
+# Project-specific
 /scripts/
