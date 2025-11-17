@@ -397,7 +397,7 @@ Used for **breach intelligence**:
 Used for **exposure reconnaissance**:
 - `https://api.shodan.io/shodan/host/{ip}?key={key}` 
 - API key required (stored in `.env`)
-- Discover open ports, vulnerabilities, and host metadata.
+- Discover open ports and host metadata.
 
 ### 🔹 Cloudflare Radar (4 Endpoints)
 - API key required (stored in `.env`)
@@ -419,7 +419,7 @@ BreachesEmailIdentity
 - created_at
 - updated_at
 - address — unique  
-Stores a user-submitted email address to monitor for breaches. 
+# Stores a user-submitted email address to monitor for breaches. 
 
 BreachesBreachHit
 - id (PK)
@@ -445,7 +445,7 @@ BreachesBreachHit
 - pwn_count
 - title
 - UNIQUE: (identity_id, breach_name)  
-Stores all HIBP breach events tied to a specific monitored email identity.
+# Stores all HIBP breach events tied to a specific monitored email identity.
 
 BreachesShodanFinding
 - id (PK)
@@ -457,7 +457,7 @@ BreachesShodanFinding
 - created_on
 - last_seen
 - os  
-Stores Shodan scan results for host/IP lookups performed through the app.
+# Stores Shodan scan results for host/IP lookups performed through the app.
 
 ---
 
@@ -495,7 +495,8 @@ Stores Shodan scan results for host/IP lookups performed through the app.
 
 6. **Register a user**
     - Go to http://127.0.0.1:8000/accounts/login/ and create a new user account.    
-    - Then login through /accounts/login/.    
+    - Auto-login is part of the app registration.
+    - Lsogin through /accounts/login/.    
     - Logout via /accounts/logout/.
 
 7. **Use the Email Breach Check**
@@ -603,7 +604,6 @@ Key Findings
  - No unhandled exceptions surfaced in terminal logs.
  - Authentication-protected endpoints redirected safely and consistently.
  - The system remained responsive and stable throughout high-volume concurrent load.
- - Invalid API requests (e.g., Cloudflare Radar with wrong parameters) did not break the UI and were captured safely.
 
 Conclusion
 The ShadowScan system demonstrates strong resilience, graceful error handling, and full alignment with INF601
