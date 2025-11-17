@@ -612,24 +612,20 @@ successfully prevents system crashes or information leakage when exposed to malf
 
 ## Self-Reflection: Robustness & Error Handling
 
-One of the key goals for this project was ensuring that the application behaved predictably and safely under stress,
+One of the key goals for this project was ensuring that the application behaved predictably and safely,
 particularly given the cybersecurity context. After completing the main features, I performed an extensive stress/fuzz
 test against the entire ShadowScan endpoint surface. The intention was to simulate real-world adversarial behavior,
 including malformed HTTP requests, injection-style payloads, incorrect primary keys, invalid API requests,
 and oversized inputs.
 
-During testing, I discovered that the logout endpoint returned a 405 (Method Not Allowed) for GET requests.
-After reviewing Django's security practices, I confirmed that this was correct behavior, as logout should only accept
-POST to prevent CSRF-based forced logout attacks. No further changes were needed.
+I observed zero crashes and zero 500-level errors. All malformed inputs resulted in appropriate responses 
+(400, 403, 404, 413), which confirms that my validation logic, error handling, and API exception wrappers are
+working as intended. This robustness directly aligns with Jason’s emphasis on preventing unexpected crashes 
+during the final project review.
 
-Aside from this expected 405 result, the application held up exceptionally well. I observed zero crashes and zero
-500-level errors. All malformed inputs resulted in appropriate responses (400, 403, 404, 413), which confirms that
-my validation logic, error handling, and API exception wrappers are working as intended. This robustness directly 
-aligns with Jason’s emphasis on preventing unexpected crashes during the final project review.
-
-Through this process, I gained a deeper understanding of how Django handles malformed requests, how to create
-defensive view logic, and how important it is in cybersecurity-focused applications to anticipate invalid or
-malicious inputs. This is an area of the project I am particularly proud of.
+Through this process, I gained a deeper understanding of how to create defensive code, and how important
+it is in cybersecurity-focused applications to anticipate invalid or malicious inputs. This is an area of the 
+project I am particularly proud of.
 
 ## Authors
  
