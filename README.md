@@ -19,12 +19,12 @@ ShadowScan provides a comprehensive cybersecurity situational awareness dashboar
 - **Email Breach Intelligence (HIBP API)**  
   Check if an email identity has appeared in known breach corpuses.  
   Store breach history, timestamps, and classifications.
-  API: https://haveibeenpwned.com/api/v3
+  - API: `https://haveibeenpwned.com/api/v3`
 
 - **Shodan Host Reconnaissance**  
   Query Shodan to gather exposed ports, services, and host metadata.  
   Generate quick-look asset summaries from any IPv4/hostname input.
-  API: https://api.shodan.io/shodan/host/{ip}?key={key}
+  - API: `https://api.shodan.io/shodan/host/{ip}?key={key}`
 
 - **Global Threat Telemetry (Cloudflare Radar × 4)**  
   Includes global Layer-3 and Layer-7 attack data:  
@@ -32,11 +32,13 @@ ShadowScan provides a comprehensive cybersecurity situational awareness dashboar
   - `layer7_target` — Top application-level attack target regions  
   - `layer3_origin` — Top network-level attack origin regions  
   - `layer3_target` — Top network-level attack target regions  
+  
   Data is visualized as a world heatmap with live updates.
-  API: radar/attacks/layer7/top/locations/origin
-       radar/attacks/layer7/top/locations/target
-       radar/attacks/layer3/top/locations/origin
-       radar/attacks/layer3/top/locations/target
+    - APIs: 
+      - `radar/attacks/layer7/top/locations/origin`
+      - `radar/attacks/layer7/top/locations/target`
+      - `radar/attacks/layer3/top/locations/origin`
+      - `radar/attacks/layer3/top/locations/target`
 
 - **Security Ticker (KEV + CVE Intelligence)**  
   Displays actively exploited vulnerabilities and high-severity CVEs from curated sources.
@@ -70,12 +72,10 @@ ShadowScan provides a comprehensive cybersecurity situational awareness dashboar
 - **Bootstrap 5 (Dark Theme)**  
 - **SQLite / Django ORM**  
 - **JavaScript Heatmap Rendering (Leaflet / custom)**  
-- **REST API Integrations**  
+- **API Integrations**  
   - HaveIBeenPwned (HIBP)  
   - Shodan  
   - Cloudflare Radar (4 endpoints)  
-- **GitHub Actions (CI Workflow)**  
-- **Docker + docker-compose (optional local build)**
 
 ---
 
@@ -396,12 +396,13 @@ Used for **breach intelligence**:
 ### 🔹 Shodan API
 Used for **exposure reconnaissance**:
 - `https://api.shodan.io/shodan/host/{ip}?key={key}` 
-- - API key required (stored in `.env`)
+- API key required (stored in `.env`)
 - Discover open ports, vulnerabilities, and host metadata.
 
 ### 🔹 Cloudflare Radar (4 Endpoints)
 - API key required (stored in `.env`)
-All used via `cloudflare.py` provider:
+- All used via `cloudflare.py` provider
+- Data is normalized, stored, and rendered on an interactive global heat map.
 
 | Key | Endpoint | Field | Description |
 |------|----------|--------|-------------|
@@ -410,16 +411,14 @@ All used via `cloudflare.py` provider:
 | `layer3_origin` | `radar/attacks/layer3/top/locations/origin` | originCountryAlpha2 | Where network-level attacks originate |
 | `layer3_target` | `radar/attacks/layer3/top/locations/target` | targetCountryAlpha2 | Where network-level attacks are targeted |
 
-Data is normalized → stored → rendered on an interactive **global heat map**.
-
 ---
 
 ### Database Schema:
 BreachesEmailIdentity
--id (PK)
--created_at
--updated_at
--address — unique
+- id (PK)
+- created_at
+- updated_at
+- address — unique  
 Stores a user-submitted email address to monitor for breaches. 
 
 BreachesBreachHit
@@ -445,7 +444,7 @@ BreachesBreachHit
 - modified_on
 - pwn_count
 - title
-- UNIQUE: (identity_id, breach_name)
+- UNIQUE: (identity_id, breach_name)  
 Stores all HIBP breach events tied to a specific monitored email identity.
 
 BreachesShodanFinding
@@ -457,14 +456,14 @@ BreachesShodanFinding
 - raw (JSON)
 - created_on
 - last_seen
-- os
+- os  
 Stores Shodan scan results for host/IP lookups performed through the app.
 
 ---
 
 # Using the Application
 
-1. Clone the repository
+1. **Clone the repository**
     ```
     git clone https://github.com/jjohnson35mps/finalprojectJeffJohnson.git
     ```
@@ -490,23 +489,23 @@ Stores Shodan scan results for host/IP lookups performed through the app.
    ```
    python manage.py runserver 8000
    ```
-5. Access the application
+5. **Access the application**
     - App: http://127.0.0.1:8000/    
     - Admin: http://127.0.0.1:8000/admin/
 
-6. Register a user
+6. **Register a user**
     - Go to http://127.0.0.1:8000/accounts/login/ and create a new user account.    
     - Then login through /accounts/login/.    
     - Logout via /accounts/logout/.
 
-7. Use the Email Breach Check
+7. **Use the Email Breach Check**
     - Enter any email address into the **Email Data Breach Check** field.
     - Click **Add** to store the identity in the dashboard.
     - Click **Scan** to query the HIBP API and retrieve breach history.
     - Results show breach names, dates, data classes, and descriptions.
     - Click **Remove** to delete the identity from the system.
 
-8. Use the Domain or IP Port Scan
+8. **Use the Domain or IP Port Scan**
     - Enter a domain (example.com) or IPv4 address (1.2.3.4).
     - Click **Scan** to query the Shodan API.
     - The results panel displays:
@@ -517,7 +516,7 @@ Stores Shodan scan results for host/IP lookups performed through the app.
     - Click **Rescan** to refresh the data.
     - Click **Remove** to delete the scan entry.
 
-9. Interact with the Global Attack Heat Map
+9. **Interact with the Global Attack Heat Map**
     - Use the dropdown selector at the top of the map to choose a dataset:
         - **Application Attack Point of Origin** (layer7_origin)  
         - **Application Attack Target** (layer7_target)  
@@ -529,7 +528,7 @@ Stores Shodan scan results for host/IP lookups performed through the app.
         - Percentage of observed activity  
         - Attack context and threat explanation
 
-10. Use the admin interface
+10. **Use the admin interface**
     - Log into http://127.0.0.1:8000/admin/ with your superuser credentials to manage all ShadowScan models, including:
         - Email Identities  
         - Breach Hits  
@@ -557,34 +556,33 @@ pip install -r requirements.txt
 ## Installing
  
 1. Clone or download this project to your local machine.
-2. Create and populate required files**
+2. Ensure you have the required dependencies listed above installed
+   - pip install -r requirements.txt
+3. Create and populate required files
    - python -c "from pathlib import Path; Path('darkweb-leak-finder/.env').touch()"
    - mkdir darkweb-leak-finder/data
-3. Go to the project root.
-4. Ensure you have the required dependencies listed above installed
-   - pip install -r requirements.txt
+4. If not in darkweb-leak-finder/src, cd darkweb-leak-finder/src
 5. Initialize the database.
    - python manage.py makemigrations
    - python manage.py migrate
    - python manage.py createsuperuser
-6. Start the development server.
+6. Add the API keys for Have I been Powned, Shodan, and Cloudflare to darkweb-leak-finder/.env
+7. Start the development server.
    - python manage.py runserver 8000
  
 ## Executing program
 
 Run the server
 ```
-python manage.py runserver
+python manage.py runserver 8000
 ```
 The server will run on http://127.0.0.1:8000
-Default username and password admin/admin
+
 ## Help
  
-If you encounter issues, re-run pip installs and re-seed the app settings:
+If you encounter issues, re-run pip installs:
 ```
 pip install -r requirements.txt
-python manage.py runserver
-
 ```
 ## Robustness Verification
 
