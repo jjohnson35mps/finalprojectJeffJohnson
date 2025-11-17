@@ -323,41 +323,41 @@ BreachesEmailIdentity
 Stores a user-submitted email address to monitor for breaches. 
 
 BreachesBreachHit
--id (PK)
--created_at
--updated_at
--breach_name
--domain
--occurred_on
--identity_id — (FK → BreachesEmailIdentity.id)
--added_on
--data_classes (JSON)
--description
--is_fabricated
--is_malware
--is_retired
--is_sensitive
--is_spam_list
--is_stealer_log
--is_subscription_free
--is_verified
--logo_path
--modified_on
--pwn_count
--title
--UNIQUE: (identity_id, breach_name)
+- id (PK)
+- created_at
+- updated_at
+- breach_name
+- domain
+- occurred_on
+- identity_id — (FK → BreachesEmailIdentity.id)
+- added_on
+- data_classes (JSON)
+- description
+- is_fabricated
+- is_malware
+- is_retired
+- is_sensitive
+- is_spam_list
+- is_stealer_log
+- is_subscription_free
+- is_verified
+- logo_path
+- modified_on
+- pwn_count
+- title
+- UNIQUE: (identity_id, breach_name)
 Stores all HIBP breach events tied to a specific monitored email identity.
 
 BreachesShodanFinding
--id (PK)
--ip
--hostnames (JSON)
--ports (JSON)
--org
--raw (JSON)
--created_on
--last_seen
--os
+- id (PK)
+- ip
+- hostnames (JSON)
+- ports (JSON)
+- org
+- raw (JSON)
+- created_on
+- last_seen
+- os
 Stores Shodan scan results for host/IP lookups performed through the app.
 
 ---
