@@ -40,7 +40,7 @@ ShadowScan provides a comprehensive cybersecurity situational awareness dashboar
       - `radar/attacks/layer3/top/locations/origin`
       - `radar/attacks/layer3/top/locations/target`
 
-- **Security Ticker (KEV + CVE Intelligence)**  
+- **Security Ticker (CVE Intelligence)**  
   Displays actively exploited vulnerabilities and high-severity CVEs from curated sources.
 
 - **Dashboard**  
@@ -399,7 +399,8 @@ Used for **exposure reconnaissance**:
 - API key required (stored in `.env`)
 - Discover open ports and host metadata.
 
-### 🔹 Cloudflare Radar (4 Endpoints)
+### 🔹 Cloudflare Radar (4 Endpoints)  
+Used for **global attack data**:
 - API key required (stored in `.env`)
 - All used via `cloudflare.py` provider
 - Data is normalized, stored, and rendered on an interactive global heat map.
@@ -499,7 +500,7 @@ Stores Shodan scan results for host/IP lookups performed through the app.
 6. **Register a user**
     - Go to http://127.0.0.1:8000/accounts/login/ and create a new user account.    
     - Auto-login is part of the app registration.
-    - Lsogin through /accounts/login/.    
+    - Login through /accounts/login/.    
     - Logout via /accounts/logout/.
 
 7. **Use the Email Breach Check**
