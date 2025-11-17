@@ -69,9 +69,9 @@ ShadowScan provides a comprehensive cybersecurity situational awareness dashboar
 
 - **Python 3.13.7**  
 - **Django 5.2.8**  
-- **Bootstrap 5 (Dark Theme)**  
-- **SQLite / Django ORM**  
-- **JavaScript Heatmap Rendering (Leaflet / custom)**  
+- **Bootstrap 5**  
+- **SQLite**  
+- **JavaScript Heatmap Rendering**  
 - **API Integrations**  
   - HaveIBeenPwned (HIBP)  
   - Shodan  
@@ -419,7 +419,8 @@ BreachesEmailIdentity
 - created_at
 - updated_at
 - address — unique  
-# Stores a user-submitted email address to monitor for breaches. 
+  
+Stores a user-submitted email address to monitor for breaches. 
 
 BreachesBreachHit
 - id (PK)
@@ -444,8 +445,9 @@ BreachesBreachHit
 - modified_on
 - pwn_count
 - title
-- UNIQUE: (identity_id, breach_name)  
-# Stores all HIBP breach events tied to a specific monitored email identity.
+- UNIQUE: (identity_id, breach_name)
+  
+Stores all HIBP breach events tied to a specific monitored email identity.
 
 BreachesShodanFinding
 - id (PK)
@@ -456,8 +458,9 @@ BreachesShodanFinding
 - raw (JSON)
 - created_on
 - last_seen
-- os  
-# Stores Shodan scan results for host/IP lookups performed through the app.
+- os
+  
+Stores Shodan scan results for host/IP lookups performed through the app.
 
 ---
 
