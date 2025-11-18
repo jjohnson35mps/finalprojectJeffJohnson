@@ -468,19 +468,19 @@ Stores Shodan scan results for host/IP lookups performed through the app.
 # Using the Application
 
 1. **Clone the repository**
-    ```
+    ```bash
     git clone https://github.com/jjohnson35mps/finalprojectJeffJohnson.git
     ```
 2. **Create and populate required files**
    - Run the Django commands below to create required files:
-     ```
+     ```bash
      python -c "from pathlib import Path; Path('darkweb-leak-finder/.env').touch()"
      mkdir darkweb-leak-finder/data
      ```
 
 3. **Create your database**
    - Run the Django commands below to initialize your database:
-     ```
+     ```bash
      cd darkweb-leak-finder/src
      python manage.py makemigrations
      python manage.py migrate
@@ -490,7 +490,7 @@ Stores Shodan scan results for host/IP lookups performed through the app.
 4. **Start the development server**
     - Add the API keys for Have I been Powned, Shodan, and Cloudflare to darkweb-leak-finder/.env
     - If not in darkweb-leak-finder/src, cd darkweb-leak-finder/src
-   ```
+   ```bash
    python manage.py runserver 8000
    ```
 5. **Access the application**
@@ -554,7 +554,7 @@ All templates extend from base.html for consistent site styling.
     - Windows
 
 - Required libraries (install with pip):
-```
+```bash
 pip install -r requirements.txt
 ```
 
@@ -578,7 +578,7 @@ pip install -r requirements.txt
 ## Executing program
 
 Run the server
-```
+```bash
 python manage.py runserver 8000
 ```
 The server will run on http://127.0.0.1:8000
@@ -586,7 +586,7 @@ The server will run on http://127.0.0.1:8000
 ## Help
  
 If you encounter issues, re-run pip installs:
-```
+```bash
 pip install -r requirements.txt
 ```
 ## Robustness Verification
