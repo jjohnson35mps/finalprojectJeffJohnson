@@ -42,13 +42,22 @@ class TimeStampedModel(models.Model):
         - Because this is abstract, no DB table is created for it alone.
     """
 
-    # When the record is created (immutable once set).
+    # created_at:
+    #   - Timestamp of when the record was first created in the database.
+    #   - auto_now_add=True means Django sets it once on initial save and
+    #     never changes it afterward.
     created_at = models.DateTimeField(auto_now_add=True)
 
-    # Updated automatically every time the record is saved.
+    # updated_at:
+    #   - Timestamp of the last time the record was saved.
+    #   - auto_now=True means Django updates this field automatically on
+    #     each call to .save(), giving you a simple "last modified" time.
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        # Mark this as an abstract base class so Django does not create
-        # a separate table for TimeStampedModel.
+        # abstract:
+        #   - Marks this model as an abstract base class.
+        #   - Django will NOT create a separate database table for
+        #     TimeStampedModel itself; instead, its fields are copied
+        #     into each concrete subclass that inherits from it.
         abstract = True

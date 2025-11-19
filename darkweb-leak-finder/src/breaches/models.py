@@ -42,10 +42,18 @@ class EmailIdentity(TimeStampedModel):
       - This is PII. Avoid logging full addresses unnecessarily.
       - Uniqueness on address prevents accidental duplication.
     """
+    # address:
+    #   - Primary key-like field for the identity (unique email address).
+    #   - Used to link all associated breach hits.
     address = models.EmailField(unique=True)
 
     def __str__(self) -> str:
-        """Return the email address for admin/debug display."""
+        """
+        Return the email address for admin/debug display.
+
+        Used by Django admin, shell, and templates when an EmailIdentity
+        instance is coerced to string.
+        """
         return str(self.address)
 
 
@@ -66,6 +74,10 @@ class BreachHit(TimeStampedModel):
       - This model contains sensitive breach metadata. Be cautious with logging
         and exports.
     """
+    # identity:
+    #   - Foreign key to the monitored email address.
+    #   - CASCADE ensures all related breaches are removed if the identity
+    #     itself is deleted.
     identity = models.ForeignKey(
         EmailIdentity,
         on_delete=models.CASCADE,
@@ -73,35 +85,63 @@ class BreachHit(TimeStampedModel):
     )
 
     # Core identity of the breach
+    # breach_name:
+    #   - Internal/HIBP name for the breach (e.g., "Adobe").
+    #   - Used to de-duplicate records per identity.
     breach_name = models.CharField(  # HIBP "Name"
         max_length=200,
     )
+
+    # domain:
+    #   - Domain associated with the breach (e.g., "adobe.com").
+    #   - Optional; defaults to an empty string when not provided.
     domain = models.CharField(
         max_length=255,
         blank=True,
         default="",
     )
+
+    # occurred_on:
+    #   - Date the breach occurred, if known.
+    #   - Nullable because some breaches do not have a precise date.
     occurred_on = models.DateField(  # HIBP "BreachDate"
         null=True,
         blank=True,
     )
 
     # Full model fields
+
+    # title:
+    #   - Human-readable title for the breach (HIBP "Title").
+    #   - Shown to users instead of the internal breach_name.
     title = models.CharField(                # HIBP "Title"
         max_length=255,
         blank=True,
         default="",
     )
+
+    # description:
+    #   - Long-form description of the incident.
+    #   - Often contains HTML from HIBP; treat as untrusted in templates.
+    #   - Do not mark safe unless sanitized.
     # HIBP "Description" (often HTML). Treat as untrusted in templates.
     description = models.TextField(
         blank=True,
         default="",
     )
+
+    # pwn_count:
+    #   - Number of affected accounts in the breach (HIBP "PwnCount").
+    #   - Nullable; may not be present for every record.
     # HIBP "PwnCount"
     pwn_count = models.BigIntegerField(
         null=True,
         blank=True,
     )
+
+    # data_classes:
+    #   - Categories of leaked data (e.g., "Email addresses", "Passwords").
+    #   - Stored as a JSON list of strings for easy filtering/analysis.
     # HIBP "DataClasses" -> list[str], stored as JSON.
     data_classes = models.JSONField(
         default=list,
@@ -109,24 +149,63 @@ class BreachHit(TimeStampedModel):
     )
 
     # Flags (never nullable; default False)
+    # is_verified:
+    #   - Indicates whether HIBP considers the breach verified/legitimate.
     is_verified = models.BooleanField(default=False)
+
+    # is_sensitive:
+    #   - True for highly sensitive breaches, which may be hidden or treated
+    #     more carefully in the UI.
     is_sensitive = models.BooleanField(default=False)
+
+    # is_fabricated:
+    #   - Marks breaches believed to be fabricated.
+    #   - Useful to down-rank or filter in user-facing views.
     is_fabricated = models.BooleanField(default=False)
+
+    # is_spam_list:
+    #   - True when the breach is actually a spam list, not a traditional
+    #     site compromise.
     is_spam_list = models.BooleanField(default=False)
+
+    # is_retired:
+    #   - Indicates the breach has been retired / no longer actively listed.
     is_retired = models.BooleanField(default=False)
+
+    # is_malware:
+    #   - True when the data comes from malware activity (e.g., keyloggers).
     is_malware = models.BooleanField(default=False)
+
+    # is_stealer_log:
+    #   - True when the breach originates from stealer logs (e.g., infostealers
+    #     capturing browser-stored credentials).
     is_stealer_log = models.BooleanField(default=False)
+
+    # is_subscription_free:
+    #   - Indicates whether the breach is visible without a paid HIBP
+    #     subscription.
     is_subscription_free = models.BooleanField(default=False)
 
     # Additional timeline metadata
+
+    # added_on:
+    #   - Date the breach was added to HIBP.
+    #   - Can differ from the actual breach date.
     added_on = models.DateField(  # HIBP "AddedDate"
         null=True,
         blank=True,
     )
+
+    # modified_on:
+    #   - Date HIBP last updated the breach metadata.
     modified_on = models.DateField(  # HIBP "ModifiedDate"
         null=True,
         blank=True,
     )
+
+    # logo_path:
+    #   - HIBP logo filename, used to construct a full logo URL.
+    #   - Stored as a relative path, not a full URL.
     # HIBP "LogoPath" (filename), used to build a public logo URL.
     logo_path = models.CharField(
         max_length=500,
@@ -142,15 +221,32 @@ class BreachHit(TimeStampedModel):
           - indexes: speed up common lookups by breach_name and identity/breach.
           - ordering: newest/most recent breaches first.
         """
+        # unique_together:
+        #   - Ensures a given email identity can only have one record per
+        #     breach_name, preventing duplicate entries.
         unique_together = ("identity", "breach_name")
+
+        # indexes:
+        #   - Index on breach_name: speeds up queries filtering by breach.
+        #   - Index on (identity, breach_name): optimizes lookups for a specific
+        #     breach per user identity.
         indexes = [
             models.Index(fields=["breach_name"]),
             models.Index(fields=["identity", "breach_name"]),
         ]
+
+        # ordering:
+        #   - Default sort order: most recent breach date first, then by
+        #     added date, then by id as a tie breaker.
         ordering = ["-occurred_on", "-added_on", "-id"]
 
     def __str__(self) -> str:
-        """Readable label combining identity and breach name."""
+        """
+        Readable label combining identity and breach name.
+
+        Useful in the admin and shell for quick identification of which
+        email was affected by which breach.
+        """
         return f"{str(self.identity)} -> {self.breach_name}"
 
     @property
@@ -193,32 +289,63 @@ class ShodanFinding(models.Model):
       - IP + hostnames can be considered sensitive in some contexts; avoid
         logging raw data unless needed.
     """
+    # ip:
+    #   - IP address of the discovered host (IPv4/IPv6).
+    #   - Primary lookup key when correlating with other systems.
     ip = models.GenericIPAddressField()
+
+    # hostnames:
+    #   - JSON list of hostnames associated with the IP.
+    #   - Usually values from reverse DNS or banners (e.g., ["example.com"]).
     hostnames = models.JSONField(
         default=list,
         blank=True,
     )  # list[str]
+
+    # ports:
+    #   - JSON list of open ports observed by Shodan.
+    #   - Used to see which services are exposed on the host.
     ports = models.JSONField(
         default=list,
         blank=True,
     )  # list[int]
+
+    # org:
+    #   - Organization/owner associated with the IP address (e.g., ISP or ASN).
     org = models.CharField(
         max_length=255,
         blank=True,
         default="",
     )
+
+    # os:
+    #   - Detected operating system, if Shodan could infer one.
+    #   - Often blank when OS detection is not possible.
     os = models.CharField(
         max_length=255,
         blank=True,
         default="",
     )
+
+    # raw:
+    #   - Full Shodan JSON payload for the host.
+    #   - Provides access to additional fields not normalized into columns.
     raw = models.JSONField(
         default=dict,
         blank=True,
     )  # full Shodan host JSON
+
+    # created_on:
+    #   - Timestamp when this record was first inserted.
+    #   - Set automatically at creation time.
     created_on = models.DateTimeField(
         auto_now_add=True,
     )
+
+    # last_seen:
+    #   - Timestamp when this host was last observed/refreshed.
+    #   - Updated by application code whenever a new observation for this host
+    #     is ingested.
     last_seen = models.DateTimeField(
         default=timezone.now,
     )
@@ -227,6 +354,9 @@ class ShodanFinding(models.Model):
         """
         Default ordering: newest/most recently seen hosts first.
         """
+        # ordering:
+        #   - Sorts by last_seen descending, then id descending.
+        #   - Ensures the most recently observed hosts appear first in queries.
         ordering = ["-last_seen", "-id"]
 
     def __str__(self) -> str:
