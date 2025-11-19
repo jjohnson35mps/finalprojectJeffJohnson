@@ -17,3 +17,4 @@ staticfiles/
 
 # Project-specific
 /scripts/
+/documentation/
