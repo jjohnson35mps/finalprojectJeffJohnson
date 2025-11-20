@@ -113,7 +113,7 @@ Is target empty?
             ↓
             End
 ```
-User can later POST /scan/<pk>/delete/ to remove a given ShodanFinding:
+User can later POST /scan/&lt;pk&gt;/delete/ to remove a given ShodanFinding:
   - Load finding
   - Delete
   - Redirect to dashboard with confirmation.
@@ -122,7 +122,7 @@ User can later POST /scan/<pk>/delete/ to remove a given ShodanFinding:
 ---------------------
 ```
 Front-end JS:
-  - On page load or interval, send GET GET /threatmap/api/points/?source=layer7_origin|layer7_target|layer3_origin|layer3_target
+  - On page load or interval, send GET /threatmap/api/points/?source=layer7_origin|layer7_target|layer3_origin|layer3_target
 
 Server:
   ↓

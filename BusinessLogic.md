@@ -16,11 +16,11 @@ Major Django apps:
 - threatmap – JSON API for the Leaflet-based heatmap
 - project-level URL configuration – global routing and inclusion of app URLConfs
 The system is designed with explicit attention to OWASP Top 10 issues, especially:
-- A01: Broken Access Control
-- A02/A05: Security Misconfiguration / Error Handling
-- A03: Injection
-- A06: Sensitive Data Exposure
-- A09: Security Logging and Monitoring Failures
+  - A01: Broken Access Control
+  - A02/A05: Security Misconfiguration / Error Handling
+  - A03: Injection
+  - A06: Sensitive Data Exposure
+  - A09: Security Logging and Monitoring Failures
 
 2. Authentication and Core Flows
 --------------------------------
@@ -371,9 +371,10 @@ Key fields:
 Meta:
 - unique_together: (identity, breach_name)
 - indexes: on breach_name and (identity, breach_name)
-- ordering: newest breach first
+- ordering: newest breach first  
+
 Business goal:
-- Provide a normalized, query-friendly representation of HIBP-style breach data per identity.
+- Provide a normalized, query-friendly representation of HIBP-style breach data per identity
 
 7.4 breaches.ShodanFinding  
 
@@ -388,9 +389,10 @@ Fields:
 - created_on: inserted automatically
 - last_seen: updated whenever a new observation comes in; default now
 Meta:
-- ordering: by last_seen descending, then id
+- ordering: by last_seen descending, then id  
+
 Business goal:
-- Keep a simple record per IP that can be refreshed in-place as new scans occur, while preserving a chronological ordering.
+- Keep a simple record per IP that can be refreshed in-place as new scans occur, while preserving a chronological ordering
 
 8. Cross-Cutting Security and Logging
 -------------------------------------
