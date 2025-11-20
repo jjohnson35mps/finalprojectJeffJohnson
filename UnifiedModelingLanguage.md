@@ -13,7 +13,7 @@ Components:
 - External Services
   - HIBP API
   - Shodan API
-  - Cloudflare Radar
+  - Cloudflare Radar API
   - KEV / vulnerability feed
 Connections:
 - Browser → Django (HTTP/HTTPS)
@@ -53,7 +53,8 @@ Classes:
   - os: CharField
   - raw: JSONField
   - created_on: DateTime
-  - last_seen: DateTime
+  - last_seen: DateTime  
+
 Relationships:
 - TimeStampedModel is an abstract superclass of EmailIdentity and BreachHit.
 - EmailIdentity 1 ----- * BreachHit (one identity can have many breach hits).
@@ -65,7 +66,8 @@ Actors:
 - User (Browser)
 - Django (breaches.scan_identity)
 - HibpClient
-- Database
+- Database  
+
 Sequence (text form):
 1. User clicks "Scan" on identity detail page.
 2. Browser sends POST /identity/&lt;pk&gt;/scan/
@@ -89,7 +91,8 @@ Actors:
 - User (Browser)
 - Django (breaches.scan_target)
 - Shodan client
-- Database
+- Database  
+
 Sequence:
 1. User submits a host in the dashboard scan form.
 2. Browser sends POST /scan/ with "target" field.
@@ -109,7 +112,8 @@ Sequence:
 Actors:
 - Front-end ThreatMap script (JavaScript)
 - Django (threatmap.threat_points)
-- ThreatMap provider
+- ThreatMap provider  
+
 Sequence:
 1. JS sends GET /threatmap/api/points/?source=layer7_origin.
 2. Django view threat_points:
@@ -129,7 +133,8 @@ Actors:
 - Front-end ticker script (JavaScript)
 - Django (security_ticker.ticker_feed)
 - fetch_kev_items service
-- KEV / vulnerability feed
+- KEV / vulnerability feed  
+
 Sequence:
 1. JS sends GET /api/ticker/ (authenticated).
 2. Django view ticker_feed:
