@@ -335,14 +335,18 @@ Stores Shodan scan results for host/IP lookups performed through the app.
     ```bash
     git clone https://github.com/jjohnson35mps/finalprojectJeffJohnson.git
     ```
-2. **Create and populate required files**
+2. Ensure the required dependencies are installed
+    ```bash
+    pip install -r darkweb-leak-finder/requirements.txt
+    ```
+3. **Create and populate required files**
    - Run the Django commands below to create required files:
      ```bash
      python -c "from pathlib import Path; Path('darkweb-leak-finder/.env').touch()"
      mkdir darkweb-leak-finder/data
      ```
 
-3. **Create your database**
+4. **Create your database**
    - Run the Django commands below to initialize your database:
      ```bash
      cd darkweb-leak-finder/src
@@ -351,30 +355,30 @@ Stores Shodan scan results for host/IP lookups performed through the app.
      python manage.py createsuperuser
      ```
 
-4. **Start the development server**
+5. **Start the development server**
     - Add the API keys for Have I been Powned, Shodan, and Cloudflare to darkweb-leak-finder/.env
     - If not in darkweb-leak-finder/src, cd darkweb-leak-finder/src
    ```bash
    python manage.py runserver 8000
    ```
-5. **Access the application**
+6. **Access the application**
     - App: http://127.0.0.1:8000/    
     - Admin: http://127.0.0.1:8000/admin/
 
-6. **Register a user**
+7. **Register a user**
     - Go to http://127.0.0.1:8000/accounts/login/ and create a new user account.    
     - Auto-login is part of the app registration.
     - Login through /accounts/login/.    
     - Logout via /accounts/logout/.
 
-7. **Use the Email Breach Check**
+8. **Use the Email Breach Check**
     - Enter any email address into the **Email Data Breach Check** field.
     - Click **Add** to store the identity in the dashboard.
     - Click **Scan** to query the HIBP API and retrieve breach history.
     - Results show breach names, dates, data classes, and descriptions.
     - Click **Remove** to delete the identity from the system.
 
-8. **Use the Domain or IP Port Scan**
+9. **Use the Domain or IP Port Scan**
     - Enter a domain (example.com) or IPv4 address (1.2.3.4).
     - Click **Scan** to query the Shodan API.
     - The results panel displays:
@@ -385,7 +389,7 @@ Stores Shodan scan results for host/IP lookups performed through the app.
     - Click **Rescan** to refresh the data.
     - Click **Remove** to delete the scan entry.
 
-9. **Interact with the Global Attack Heat Map**
+10. **Interact with the Global Attack Heat Map**
     - Use the dropdown selector at the top of the map to choose a dataset:
         - **Application Attack Point of Origin** (layer7_origin)  
         - **Application Attack Target** (layer7_target)  
@@ -397,7 +401,7 @@ Stores Shodan scan results for host/IP lookups performed through the app.
         - Percentage of observed activity  
         - Attack context and threat explanation
 
-10. **Use the admin interface**
+11. **Use the admin interface**
     - Log into http://127.0.0.1:8000/admin/ with your superuser credentials to manage all ShadowScan models, including:
         - Email Identities  
         - Breach Hits  
