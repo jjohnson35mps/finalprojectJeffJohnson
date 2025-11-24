@@ -82,304 +82,169 @@ ShadowScan provides a comprehensive cybersecurity situational awareness dashboar
 ## Project Structure
 
 ```
-darkweb-leak-finder
-│   .env
-│   .gitignore
-│   docker-compose.yml
-│   Dockerfile
-│   manage.py
-│   pyproject.toml
-│   requirements.txt
-│   ruff.toml
-│
-├───.github
-│   └───workflows
-│           ci.yml
-│
-├───.pytest_cache
-│   │   .gitignore
-│   │   CACHEDIR.TAG
-│   │   README.md
-│   │
-│   └───v
-│       └───cache
-│               lastfailed
-│               nodeids
-│
-├───data
-│       db.sqlite3
-│
-├───scripts
-│       path_checker.py
-│       stressor.py
-│       stressor_20251117_123359.log
-│
-└───src
-    │   manage.py
-    │   pytest.ini
-    │   schema_snapshot_models.py
-    │
-    ├───.pytest_cache
-    │   │   .gitignore
-    │   │   CACHEDIR.TAG
-    │   │   README.md
-    │   │
-    │   └───v
-    │       └───cache
-    │               lastfailed
-    │               nodeids
-    │
-    ├───breaches
-    │   │   admin.py
-    │   │   apps.py
-    │   │   models.py
-    │   │   urls.py
-    │   │   views.py
-    │   │   __init__.py
-    │   │
-    │   ├───migrations
-    │   │   │   0001_initial.py
-    │   │   │   0002_breachhit_added_on_breachhit_data_classes_and_more.py
-    │   │   │   0003_shodanfinding.py
-    │   │   │   0004_alter_breachhit_options_alter_breachhit_data_classes_and_more.py
-    │   │   │   __init__.py
-    │   │   │
-    │   │   └───__pycache__
-    │   │           0001_initial.cpython-313.pyc
-    │   │           0002_breachhit_added_on_breachhit_data_classes_and_more.cpython-313.pyc
-    │   │           0003_shodanfinding.cpython-313.pyc
-    │   │           0004_alter_breachhit_options_alter_breachhit_data_classes_and_more.cpython-313.pyc
-    │   │           __init__.cpython-313.pyc
-    │   │
-    │   ├───services
-    │   │   │   hibp.py
-    │   │   │   shodan_client.py
-    │   │   │
-    │   │   └───__pycache__
-    │   │           hibp.cpython-313.pyc
-    │   │           shodan_client.cpython-313.pyc
-    │   │
-    │   ├───static
-    │   │   └───breaches
-    │   │       ├───css
-    │   │       ├───img
-    │   │       └───js
-    │   ├───templates
-    │   │   └───breaches
-    │   │           identity_detail.html
-    │   │           main_db.html
-    │   │
-    │   ├───templatetags
-    │   │   │   hibp_extras.py
-    │   │   │   __init__.py
-    │   │   │
-    │   │   └───__pycache__
-    │   │           hibp_extras.cpython-313.pyc
-    │   │           __init__.cpython-313.pyc
-    │   │
-    │   ├───tests
-    │   └───__pycache__
-    │           admin.cpython-313.pyc
-    │           apps.cpython-313.pyc
-    │           models.cpython-313.pyc
-    │           urls.cpython-313.pyc
-    │           views.cpython-313.pyc
-    │           __init__.cpython-313.pyc
-    │
-    ├───core
-    │   │   admin.py
-    │   │   apps.py
-    │   │   middleware.py
-    │   │   models.py
-    │   │   urls.py
-    │   │   views.py
-    │   │   __init__.py
-    │   │
-    │   ├───migrations
-    │   │   │   __init__.py
-    │   │   │
-    │   │   └───__pycache__
-    │   │           __init__.cpython-313.pyc
-    │   │
-    │   ├───services
-    │   │       utils.py
-    │   │
-    │   ├───static
-    │   │   └───core
-    │   │       │   dark.css
-    │   │       │
-    │   │       ├───css
-    │   │       ├───img
-    │   │       └───js
-    │   ├───templates
-    │   │   └───core
-    │   │           base.html
-    │   │
-    │   ├───tests
-    │   └───__pycache__
-    │           admin.cpython-313.pyc
-    │           apps.cpython-313.pyc
-    │           middleware.cpython-313.pyc
-    │           models.cpython-313.pyc
-    │           urls.cpython-313.pyc
-    │           views.cpython-313.pyc
-    │           __init__.cpython-313.pyc
-    │
-    ├───DarkWebLeakFinder
-    │   │   asgi.py
-    │   │   settings.py
-    │   │   urls.py
-    │   │   wsgi.py
-    │   │   __init__.py
-    │   │
-    │   └───__pycache__
-    │           settings.cpython-313.pyc
-    │           urls.cpython-313.pyc
-    │           wsgi.cpython-313.pyc
-    │           __init__.cpython-313.pyc
-    │
-    ├───dashboard
-    │   │   admin.py
-    │   │   apps.py
-    │   │   models.py
-    │   │   urls.py
-    │   │   views.py
-    │   │   __init__.py
-    │   │
-    │   ├───migrations
-    │   │   │   __init__.py
-    │   │   │
-    │   │   └───__pycache__
-    │   │           __init__.cpython-313.pyc
-    │   │
-    │   ├───services
-    │   ├───static
-    │   │   └───dashboard
-    │   │       ├───css
-    │   │       ├───img
-    │   │       └───js
-    │   ├───templates
-    │   │   ├───dashboard
-    │   │   │       detail.html
-    │   │   │       home.html
-    │   │   │
-    │   │   └───registration
-    │   │           login.html
-    │   │           register.html
-    │   │
-    │   ├───tests
-    │   └───__pycache__
-    │           admin.cpython-313.pyc
-    │           apps.cpython-313.pyc
-    │           models.cpython-313.pyc
-    │           urls.cpython-313.pyc
-    │           views.cpython-313.pyc
-    │           __init__.cpython-313.pyc
-    │
-    ├───data
-    │       kev_cache.json
-    │
-    ├───security_ticker
-    │   │   apps.py
-    │   │   urls.py
-    │   │   views.py
-    │   │   __init__.py
-    │   │
-    │   ├───migrations
-    │   ├───services
-    │   │   │   sources.py
-    │   │   │   __init__.py
-    │   │   │
-    │   │   └───__pycache__
-    │   │           sources.cpython-313.pyc
-    │   │           __init__.cpython-313.pyc
-    │   │
-    │   ├───static
-    │   │   └───security_ticker
-    │   │       ├───css
-    │   │       │       ticker.css
-    │   │       │
-    │   │       ├───img
-    │   │       └───js
-    │   │               ticker.js
-    │   │
-    │   ├───templates
-    │   │   └───security_ticker
-    │   │           _ticker.html
-    │   │
-    │   ├───templatetags
-    │   │   │   breach_extras.py
-    │   │   │   security_ticker_tags.py
-    │   │   │   __init__.py
-    │   │   │
-    │   │   └───__pycache__
-    │   │           breach_extras.cpython-313.pyc
-    │   │           security_ticker_tags.cpython-313.pyc
-    │   │           __init__.cpython-313.pyc
-    │   │
-    │   └───__pycache__
-    │           apps.cpython-313.pyc
-    │           urls.cpython-313.pyc
-    │           views.cpython-313.pyc
-    │           __init__.cpython-313.pyc
-    │
-    ├───templates
-    └───threatmap
-        │   admin.py
-        │   apps.py
-        │   conf.py
-        │   models.py
-        │   urls.py
-        │   views.py
-        │   __init__.py
-        │
-        ├───management
-        │   │   __init__.py
-        │   │
-        │   ├───commands
-        │   │       fetch_threatmap.py
-        │   │
-        │   └───__pycache__
-        │           __init__.cpython-313.pyc
-        │
-        ├───providers
-        │   │   base.py
-        │   │   cloudflare.py
-        │   │   __init__.py
-        │   │
-        │   └───__pycache__
-        │           cloudflare.cpython-313.pyc
-        │           __init__.cpython-313.pyc
-        │
-        ├───services
-        │   │   fetcher.py
-        │   │   __init__.py
-        │   │
-        │   └───__pycache__
-        │           fetcher.cpython-313.pyc
-        │           __init__.cpython-313.pyc
-        │
-        ├───static
-        │   └───threatmap
-        │       └───js
-        │               heatmap.js
-        │
-        ├───templates
-        │   └───threatmap
-        │           heatmap.html
-        │
-        ├───tests
-        │       test_providers.py
-        │       __init__.py
-        │
-        └───__pycache__
-                admin.cpython-313.pyc
-                apps.cpython-313.pyc
-                conf.cpython-313.pyc
-                models.cpython-313.pyc
-                urls.cpython-313.pyc
-                views.cpython-313.pyc
-                __init__.cpython-313.pyc
+|   BusinessLogic.md
+|   FlowCharts.md
+|   README.md (this file)
+|   UnifiedModelingLanguage.md
+|   
+\---darkweb-leak-finder
+    |   .env
+    |   .gitignore
+    |   docker-compose.yml
+    |   Dockerfile
+    |   manage.py
+    |   pyproject.toml
+    |   requirements.txt
+    |   ruff.toml
+    |               
+    +---data
+    |       db.sqlite3
+    |               
+    \---src
+        |   manage.py
+        |   pytest.ini
+        |                 
+        +---breaches
+        |   |   admin.py
+        |   |   apps.py
+        |   |   models.py
+        |   |   urls.py
+        |   |   views.py
+        |   |   __init__.py
+        |   |           
+        |   +---services
+        |   |   |   hibp.py
+        |   |   |   shodan_client.py
+        |   |           
+        |   +---static
+        |   |   \---breaches
+        |   |       +---css
+        |   |       +---img
+        |   |       \---js
+        |   +---templates
+        |   |   \---breaches
+        |   |           identity_detail.html
+        |   |           main_db.html
+        |   |           
+        |   +---templatetags
+        |   |   |   hibp_extras.py
+        |   |   |   __init__.py
+        |           
+        +---core
+        |   |   admin.py
+        |   |   apps.py
+        |   |   middleware.py
+        |   |   models.py
+        |   |   urls.py
+        |   |   views.py
+        |   |   __init__.py
+        |   |           
+        |   +---services
+        |   |       utils.py
+        |   |       
+        |   +---static
+        |   |   \---core
+        |   |       |   dark.css
+        |   |       |   
+        |   |       +---css
+        |   |       +---img
+        |   |       \---js
+        |   +---templates
+        |   |   \---core
+        |   |           base.html
+        |           
+        +---DarkWebLeakFinder
+        |   |   asgi.py
+        |   |   settings.py
+        |   |   urls.py
+        |   |   wsgi.py
+        |   |   __init__.py
+        |           
+        +---dashboard
+        |   |   admin.py
+        |   |   apps.py
+        |   |   models.py
+        |   |   urls.py
+        |   |   views.py
+        |   |   __init__.py
+        |   |           
+        |   +---services
+        |   +---static
+        |   |   \---dashboard
+        |   |       +---css
+        |   |       +---img
+        |   |       \---js
+        |   +---templates
+        |   |   +---dashboard
+        |   |   |       detail.html
+        |   |   |       home.html
+        |   |   |       
+        |   |   \---registration
+        |   |           login.html
+        |   |           register.html
+        |       
+        +---security_ticker
+        |   |   apps.py
+        |   |   urls.py
+        |   |   views.py
+        |   |   __init__.py
+        |   |   
+        |   +---migrations
+        |   +---services
+        |   |   |   sources.py
+        |   |   |   __init__.py
+        |   |           
+        |   +---static
+        |   |   \---security_ticker
+        |   |       +---css
+        |   |       |       ticker.css
+        |   |       |       
+        |   |       +---img
+        |   |       \---js
+        |   |               ticker.js
+        |   |               
+        |   +---templates
+        |   |   \---security_ticker
+        |   |           _ticker.html
+        |   |           
+        |   +---templatetags
+        |   |   |   breach_extras.py
+        |   |   |   security_ticker_tags.py
+        |   |   |   __init__.py
+        |           
+        +---templates
+        \---threatmap
+            |   admin.py
+            |   apps.py
+            |   conf.py
+            |   models.py
+            |   urls.py
+            |   views.py
+            |   __init__.py
+            |   
+            +---management
+            |   |   __init__.py
+            |   |   
+            |   +---commands
+            |   |       fetch_threatmap.py
+            |           
+            +---providers
+            |   |   base.py
+            |   |   cloudflare.py
+            |   |   __init__.py
+            |           
+            +---services
+            |   |   fetcher.py
+            |   |   __init__.py
+            |           
+            +---static
+            |   \---threatmap
+            |       \---js
+            |               heatmap.js
+            |               
+            +---templates
+            |   \---threatmap
+                    
 
 ```
 
